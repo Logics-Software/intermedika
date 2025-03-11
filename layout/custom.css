@@ -1,0 +1,15 @@
+body{
+	padding-top: 50px;
+}
+.my-table td{
+	padding-bottom: 10px !important;
+}
+.invisible-form{
+	border: none;
+}
+.heading-table{
+	font-weight: bold;
+}
+#handme{
+	cursor: pointer;
+}
