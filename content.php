@@ -1,10 +1,10 @@
 <?php
-    if(isset($_SESSION['indoprima-login'])){
+    if(isset($_SESSION['intermedika-login'])){
 	?>
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <nav class="navbar navbar-inverse navbar-fixed-top">
+                    <nav class="navbar navbar-inverse navbar-fixed-top ">
                     <div class="container">
                             <div class="navbar-header">
                                 <button style="float:left;margin-left:15px;" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -13,7 +13,7 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <img src="layout/indoprima.png" alt="Indoprima Online" height="50" style="margin-right:10px; float:left"/>
+                                <img src="layout/intermedika.png" alt="intermedika Online" height="50" style="margin-right:10px; float:left"/>
                                 <a class="navbar-brand" href=""><strong>Online</strong></a>
                             </div>
                             <div id="navbar" class="collapse navbar-collapse">

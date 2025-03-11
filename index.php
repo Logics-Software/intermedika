@@ -12,9 +12,9 @@ date_default_timezone_set('Asia/Jakarta');
 <html lang="en">
 
 <head>
-<link rel='shortcut icon' type='image/x-icon' href='layout/indoprima.png' />
+<link rel='shortcut icon' type='image/x-icon' href='layout/intermedika.png' />
 <?php
-if(!isset($_SESSION['indoprima-login'])){
+if(!isset($_SESSION['intermedika-login'])){
 	?>
 	<title>PT. SATRIA MEDIKA SEJAHTERA - Login</title>
 	<?php
@@ -47,13 +47,13 @@ if(!isset($_SESSION['indoprima-login'])){
 
 <body>
 	<?php
-	if(!isset($_SESSION['indoprima-login'])){
+	if(!isset($_SESSION['intermedika-login'])){
 	?>
 		<div class="container">
 			<div class="row">
 				<div class="col-sm-4">&nbsp;</div>
 				<div class="col-sm-4">
-					<img src="layout/logo-indoprima.png" alt="Online" height="150" 
+					<img src="layout/logo-intermedika.png" alt="Online" height="150" 
 					style = "display: block; margin-left: auto; margin-right: auto; margin-bottom: 20px;"/>
 					<?php echomsg(); ?>
 					<form method="POST" action="">
@@ -77,7 +77,7 @@ if(!isset($_SESSION['indoprima-login'])){
 						$A_VALID = mysqli_num_rows($A_SQL);
 
 						if($A_VALID){
-							$_SESSION['indoprima-login'] 	= 'true';
+							$_SESSION['intermedika-login'] 	= 'true';
                             $_SESSION['userid'] 		= $A_RES['userid'];
 							$_SESSION['password'] 		= $A_RES['password'];
                             $_SESSION['username'] 		= $A_RES['username'];

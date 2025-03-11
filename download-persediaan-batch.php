@@ -17,7 +17,7 @@ $pdf=new FPDF('P','mm','A4');
 $pdf->AddPage();
  
 $pdf->SetFont('Times','B',13);
-$pdf->Cell(200,0,'PT. INDOPRIMA MEDIKA',0,1,'C');
+$pdf->Cell(200,0,'PT. INDOPRIMA INTERMEDIKA',0,1,'C');
 $pdf->Cell(200,10,'DAFTAR PERSEDIAAN BARANG',0,0,'C');
  
 $pdf->Cell(10,15,'',0,1);

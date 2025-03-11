@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-<link rel='shortcut icon' type='image/x-icon' href='layout/indoprima.png' />
+<link rel='shortcut icon' type='image/x-icon' href='layout/intermedika.png' />
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <!-- *.css -->
 <link rel='stylesheet' href='layout/bootstrap/css/bootstrap.min.css' type='text/css' media='all' />
