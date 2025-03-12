@@ -42,7 +42,7 @@
                                         <?php
                                     }
                                     ?>
-                                        <li><a href="index.php?page=customer-aktif">Daftar Customer Aktif</a></li>
+                                        <li><a href="index.php?page=customer-aktif">Customer Non Aktif</a></li>
                                     <?php
                                     if ($_SESSION['privilege']=='3'){
                                         ?>

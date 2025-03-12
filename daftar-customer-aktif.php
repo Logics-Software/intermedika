@@ -118,7 +118,7 @@ function namaBulan(int $bl){
                 </select>
             </div>
             <button type="submit" name="submitlaporan" class="btn btn-primary btn-block">
-                <i class="fa fa-television" aria-hidden="true"></i> Tampilkan Customer Aktif
+                <i class="fa fa-television" aria-hidden="true"></i> Tampilkan Customer Non Aktif
             </button>
         </form>
     </div>
