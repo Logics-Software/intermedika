@@ -42,6 +42,7 @@
                                         <?php
                                     }
                                     ?>
+                                        <li><a href="index.php?page=customer-aktif">Daftar Customer Aktif</a></li>
                                     <?php
                                     if ($_SESSION['privilege']=='3'){
                                         ?>
@@ -92,6 +93,9 @@
                         }
                         elseif($A_PAGE == 'rekap-pembelian'){
                             require_once 'transaksi-pembelian.php';
+                        }
+                        elseif($A_PAGE == 'customer-aktif'){
+                            require_once 'daftar-customer-aktif.php';
                         }
                         elseif($A_PAGE == 'manajemen-user'){
                             require_once 'manajemen-user.php';
