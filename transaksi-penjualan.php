@@ -144,12 +144,23 @@ if(isset($_POST['submitlaporan'])){
                 $TOTAL_SALDO = 0;
  
                 if ($PERIODE == 'bulan') {
-                    $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
-                    WHERE MONTH(tanggal) = '".$A_BULAN."' AND YEAR(tanggal) = '".$A_TAHUN."' ORDER BY nopenjualan");
+                    if ($_SESSION['privilege']=='0'){
+                        $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
+                        WHERE MONTH(tanggal) = '".$A_BULAN."' AND YEAR(tanggal) = '".$A_TAHUN."' ORDER BY nopenjualan");
+                    } else {
+                        $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
+                        WHERE MONTH(tanggal) = '".$A_BULAN."' AND YEAR(tanggal) = '".$A_TAHUN."' AND kodesalesman = '".$_SESSION['kodesales']."' ORDER BY nopenjualan");
+                    }
                 } else {
-                    $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
-                    WHERE tanggal BETWEEN '".$TANGGALAWAL."' AND '".$TANGGALAKHIR."' ORDER BY nopenjualan");
+                    if ($_SESSION['privilege']=='0'){
+                        $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
+                        WHERE tanggal BETWEEN '".$TANGGALAWAL."' AND '".$TANGGALAKHIR."' AND kodesalesman = '".$_SESSION['kodesales']."' ORDER BY nopenjualan");
+                    } else {
+                        $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
+                        WHERE tanggal BETWEEN '".$TANGGALAWAL."' AND '".$TANGGALAKHIR."' ORDER BY nopenjualan");
+                    }
                 }
+
                 while($A_RES = mysqli_fetch_array($A_SQL,MYSQLI_ASSOC)){
                     $TOTAL_PENJUALAN = $TOTAL_PENJUALAN + $A_RES['nilaipenjualan'];
                     $TOTAL_SALDO = $TOTAL_SALDO + $A_RES['saldopenjualan'];
@@ -212,8 +223,14 @@ if(isset($_POST['submitlaporan'])){
             <?php
             $TOTAL_PENJUALAN = 0;
             $TOTAL_SALDO = 0;
-            $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
-                                  WHERE MONTH(tanggal) = '".$A_BULAN_TODAY."' AND YEAR(tanggal) = '".$A_TAHUN_TODAY."' ORDER BY nopenjualan");
+
+            if ($_SESSION['privilege']=='0'){    
+                $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
+                WHERE MONTH(tanggal) = '".$A_BULAN_TODAY."' AND YEAR(tanggal) = '".$A_TAHUN_TODAY."' AND kodesalesman = '".$_SESSION['kodesales']."' ORDER BY nopenjualan");
+            }else{
+                $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM penjualan 
+                WHERE MONTH(tanggal) = '".$A_BULAN_TODAY."' AND YEAR(tanggal) = '".$A_TAHUN_TODAY."' ORDER BY nopenjualan");
+            }
 
             while($A_RES = mysqli_fetch_array($A_SQL,MYSQLI_ASSOC)){
                 $TOTAL_PENJUALAN = $TOTAL_PENJUALAN + $A_RES['nilaipenjualan'];

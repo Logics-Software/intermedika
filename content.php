@@ -1,10 +1,10 @@
 <?php
-    if(isset($_SESSION['intermedika-login'])){
+    if(isset($_SESSION['indoprima-login'])){
 	?>
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <nav class="navbar navbar-inverse navbar-fixed-top ">
+                    <nav class="navbar navbar-inverse navbar-fixed-top">
                     <div class="container">
                             <div class="navbar-header">
                                 <button style="float:left;margin-left:15px;" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -13,7 +13,7 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <img src="layout/intermedika.png" alt="intermedika Online" height="50" style="margin-right:10px; float:left"/>
+                                <img src="layout/indoprima.png" alt="Indoprima Online" height="50" style="margin-right:10px; float:left"/>
                                 <a class="navbar-brand" href=""><strong>Online</strong></a>
                             </div>
                             <div id="navbar" class="collapse navbar-collapse">
@@ -27,7 +27,7 @@
                                             </ul>
                                     </li>
                                     <?php
-                                    if ($_SESSION['privilege']!='2'){
+                                    if ($_SESSION['privilege']!='0'){
                                         ?>
                                         <li class="dropdown">
                                             <a href="#" data-toggle="dropdown">Tagihan & Rekap <span class="caret"></span></a>
@@ -38,11 +38,27 @@
                                                 <li><a href="index.php?page=rekap-pembelian">Daftar Transaksi Pembelian</a></li>
                                             </ul>
                                         </li>
-                                        <li><a href="index.php?page=omset-penjualan">Omset Sales</a></li>
+                                        <?php
+                                    } else {
+                                        ?>
+                                        <li class="dropdown">
+                                            <a href="#" data-toggle="dropdown">Tagihan & Rekap <span class="caret"></span></a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="index.php?page=daftar-piutang">Tagihan Penjualan (Piutang)</a></li>
+                                                <li><a href="index.php?page=rekap-penjualan">Daftar Transaksi Penjualan</a></li>
+                                            </ul>
+                                        </li>
                                         <?php
                                     }
                                     ?>
+                                        <li><a href="index.php?page=omset-penjualan">Omset Sales</a></li>
+                                    <?php
+                                    if ($_SESSION['privilege']!='0'){
+                                        ?>
                                         <li><a href="index.php?page=customer-aktif">Customer Non Aktif</a></li>
+                                        <?php
+                                    }
+                                    ?>
                                     <?php
                                     if ($_SESSION['privilege']=='3'){
                                         ?>
