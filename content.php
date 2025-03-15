@@ -18,6 +18,9 @@
                             </div>
                             <div id="navbar" class="collapse navbar-collapse">
                                 <ul class="nav navbar-nav navbar-right">
+                                    <?php
+                                    if ($_SESSION['privilege']!='0'){
+                                    ?>
                                     <li class="dropdown">
                                             <a href="#" data-toggle="dropdown">Stok & Harga <span class="caret"></span></a>
                                             <ul class="dropdown-menu">
@@ -26,6 +29,13 @@
                                                 <li><a href="index.php?page=daftar-persediaan">Daftar Persediaan per Batch</a></li> 
                                             </ul>
                                     </li>
+                                    <?php
+                                    } else {
+                                        ?>
+                                        <li><a href="index.php?page=daftar-harga-jual">Daftar Stok dan Harga Barang</a></li>
+                                        <?php
+                                    }
+                                    ?>
                                     <?php
                                     if ($_SESSION['privilege']!='0'){
                                         ?>
