@@ -1,5 +1,5 @@
 <?php
-    if(isset($_SESSION['intermedika-login'])){
+    if(isset($_SESSION['indoprima-login'])){
 	?>
         <div class="container">
             <div class="row">
@@ -13,23 +13,23 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <img src="layout/intermedika.png" alt="intermedika Online" height="50" style="margin-right:10px; float:left"/>
+                                <img src="layout/indoprima.png" alt="Indoprima Online" height="50" style="margin-right:10px; float:left"/>
                                 <a class="navbar-brand" href=""><strong>Online</strong></a>
                             </div>
                             <div id="navbar" class="collapse navbar-collapse">
                                 <ul class="nav navbar-nav navbar-right">
                                     <?php
                                     if ($_SESSION['privilege']!='0'){
-                                    ?>
-                                    <li class="dropdown">
-                                            <a href="#" data-toggle="dropdown">Stok & Harga <span class="caret"></span></a>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="index.php?page=daftar-harga-jual">Daftar Stok dan Harga Barang</a></li>
-                                                <li><a href="index.php?page=daftar-harga-batch">Daftar Stok dan Harga per Batch</a></li> 
-                                                <li><a href="index.php?page=daftar-persediaan">Daftar Persediaan per Batch</a></li> 
-                                            </ul>
-                                    </li>
-                                    <?php
+                                        ?>
+                                        <li class="dropdown">
+                                                <a href="#" data-toggle="dropdown">Stok & Harga <span class="caret"></span></a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="index.php?page=daftar-harga-jual">Daftar Stok dan Harga Barang</a></li>
+                                                    <li><a href="index.php?page=daftar-harga-batch">Daftar Stok dan Harga per Batch</a></li> 
+                                                    <li><a href="index.php?page=daftar-persediaan">Daftar Persediaan per Batch</a></li> 
+                                                </ul>
+                                        </li>
+                                        <?php
                                     } else {
                                         ?>
                                         <li><a href="index.php?page=daftar-harga-jual">Daftar Stok dan Harga Barang</a></li>
@@ -62,6 +62,7 @@
                                     }
                                     ?>
                                         <li><a href="index.php?page=omset-penjualan">Omset Sales</a></li>
+                                        <li><a href="index.php?page=omset-harian">Omset Harian</a></li>
                                     <?php
                                     if ($_SESSION['privilege']!='0'){
                                         ?>
@@ -98,6 +99,9 @@
                         }
                         elseif($A_PAGE == 'omset-penjualan'){
                             require_once 'omset-penjualan.php';
+                        }
+                        elseif($A_PAGE == 'omset-harian'){
+                            require_once 'omsetharian.php';
                         }
                         elseif($A_PAGE == 'daftar-harga-jual'){
                             require_once 'daftar-harga-jual.php';

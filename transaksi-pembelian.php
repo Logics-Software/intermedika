@@ -155,9 +155,7 @@ if(isset($_POST['submitlaporan'])){
                     $TOTAL_pembelian = $TOTAL_pembelian + $A_RES['nilaipembelian'];
                     $TOTAL_SALDO = $TOTAL_SALDO + $A_RES['saldopembelian'];
                 ?>
-                    <tr>
-                    <tr>
-                    <td>
+                <tr>
                     <td><?php echo $A_RES['nopembelian']; ?></td>
                     <td><?php echo $A_RES['tanggal']; ?></td>
                     <td><?php echo $A_RES['jatuhtempo']; ?></td>
@@ -170,16 +168,19 @@ if(isset($_POST['submitlaporan'])){
                 <?php
                 }
                 ?>
-                <tr class="heading-table">
-                    <td>TOTAL</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td align="right"><?php echo number_format($TOTAL_pembelian); ?></td>
-                    <td align="right"><?php echo number_format($TOTAL_SALDO); ?></td>
-            </tr>
         </tbody>
+        <tfoot>
+            <tr class="heading-table">
+                <td>TOTAL</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td align="right"><?php echo number_format($TOTAL_pembelian); ?></td>
+                <td align="right"><?php echo number_format($TOTAL_SALDO); ?></td>
+            </tr>
+        </tfoot>
     </table>
 
     <?php
@@ -233,17 +234,19 @@ if(isset($_POST['submitlaporan'])){
             <?php
             }
             ?>
-            <tr class="heading-table">
-                    <td>TOTAL</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td align="right"><?php echo number_format($TOTAL_pembelian); ?></td>
-                    <td align="right"><?php echo number_format($TOTAL_SALDO); ?></td>
-            </tr>
         </tbody>
+        <tfoot>
+            <tr class="heading-table">
+                <td>TOTAL</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td align="right"><?php echo number_format($TOTAL_pembelian); ?></td>
+                <td align="right"><?php echo number_format($TOTAL_SALDO); ?></td>
+            </tr>
+        </tfoot>
     </table>
     <?php
     echo "<script> document.getElementById('bulan').value = ".$A_BULAN_TODAY."; </script>";
