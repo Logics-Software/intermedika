@@ -6,7 +6,7 @@
   header('Access-Control-Allow-Headers: Access-Control-Allow-Headers, Content-Type, Access-Control-Allow-Methods, Authorization, X-Requested-With');
 
   include_once '../../config/Database.php';
-  include_once '../../models/omsetharian.php';
+  include_once '../../models/OmsetHarian.php';
 
   // Instantiate DB & connect
   $database = new Database();

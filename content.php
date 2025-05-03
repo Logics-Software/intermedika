@@ -63,13 +63,7 @@
                                     ?>
                                         <li><a href="index.php?page=omset-penjualan">Omset Sales</a></li>
                                         <li><a href="index.php?page=omset-harian">Omset Harian</a></li>
-                                    <?php
-                                    if ($_SESSION['privilege']!='0'){
-                                        ?>
                                         <li><a href="index.php?page=customer-aktif">Customer Non Aktif</a></li>
-                                        <?php
-                                    }
-                                    ?>
                                     <?php
                                     if ($_SESSION['privilege']=='3'){
                                         ?>
