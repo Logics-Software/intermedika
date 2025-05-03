@@ -1,5 +1,5 @@
 <?php
-    if(isset($_SESSION['indoprima-login'])){
+    if(isset($_SESSION['intermedika-login'])){
 	?>
         <div class="container">
             <div class="row">
@@ -13,7 +13,7 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <img src="layout/indoprima.png" alt="Indoprima Online" height="50" style="margin-right:10px; float:left"/>
+                                <img src="layout/intermedika.png" alt="Intermedika Online" height="50" style="margin-right:10px; float:left"/>
                                 <a class="navbar-brand" href=""><strong>Online</strong></a>
                             </div>
                             <div id="navbar" class="collapse navbar-collapse">
