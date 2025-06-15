@@ -28,7 +28,7 @@
   $omsetpenjualan->penerimaan = $data->penerimaan;
   $omsetpenjualan->cn = $data->cn;
   $omsetpenjualan->penerimaanbersih = $data->penerimaanbersih;
-  $omsetpenjualan->tagetpenjualan = $data->targetpenjualan;
+  $omsetpenjualan->targetpenjualan = $data->targetpenjualan;
   $omsetpenjualan->prosenpenjualan = $data->prosenpenjualan;
   $omsetpenjualan->targetpenerimaan = $data->targetpenerimaan;
   $omsetpenjualan->prosenpenerimaan = $data->prosenpenerimaan;
