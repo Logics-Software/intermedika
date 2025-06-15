@@ -69,13 +69,13 @@ if(isset($_POST['submitlaporan'])){
     }else{
         $A_QUERY = $A_QUERY . " WHERE namabarang <> '' ORDER BY namabarang";
     }
-    $A_FOLDER_PATH = "download-persediaan-batch.php?querytext=".$A_QUERY;
+    $A_FOLDER_PATH = "download-persediaan.php?querytext=".$A_QUERY;
     ?>
     <a class="btn btn-warning btn-block" target="_blank" href=" <?=$A_FOLDER_PATH?> ">Download Persediaan Barang per Batch</a><br/>
     <table class="table table-bordered">
         <tbody>
             <?php
-                $A_QUERY = "SELECT * FROM daftarharga ";
+                $A_QUERY = "SELECT namabarang, namapabrik, sum(stokakhir) AS stokakhir, sum(stokakhir*hpp)/sum(stokakhir) AS hpp FROM daftarharga ";
                 if (trim($A_FIND) <> ''){
                     $A_KONDISI1 = "namabarang LIKE '%".$A_FIND."%' ";
                 }
@@ -92,9 +92,9 @@ if(isset($_POST['submitlaporan'])){
                 if (trim(($A_KONDISI1)<>'' || trim($A_KONDISI2)<>'') && trim($A_KONDISI3)<>''){$A_KONDISI3 = " AND ".$A_KONDISI3;}
     
                 if (trim($A_KONDISI1)<>'' || trim($A_KONDISI2)<>'' || trim($A_KONDISI3)<>''){
-                    $A_QUERY = $A_QUERY . " WHERE namabarang <> '' AND " . $A_KONDISI1 . $A_KONDISI2 . $A_KONDISI3 . " ORDER BY namabarang";
+                    $A_QUERY = $A_QUERY . " WHERE namabarang <> '' AND " . $A_KONDISI1 . $A_KONDISI2 . $A_KONDISI3 . " GROUP BY namabarang, namapabrik";
                 }else{
-                    $A_QUERY = $A_QUERY . " WHERE namabarang <> '' ORDER BY namabarang";
+                    $A_QUERY = $A_QUERY . " WHERE namabarang <> '' GROUP BY namabarang, namapabrik";
                 }
                 $A_SQL = mysqli_query($A_CONNECT,$A_QUERY);
                 while($A_RES = mysqli_fetch_array($A_SQL,MYSQLI_ASSOC)){
@@ -102,8 +102,7 @@ if(isset($_POST['submitlaporan'])){
                 ?>
                 <tr>
                     <td><?php echo $A_RES['namabarang']; ?></td>
-                    <td><?php echo $A_RES['nomorbatch']; ?></td>
-                    <td><?php echo $A_RES['expireddate']; ?></td>
+                    <td><?php echo $A_RES['namapabrik']; ?></td>
                     <td align="right"><?php echo number_format($A_RES['stokakhir']); ?></td>
                     <td align="right"><?php echo number_format($A_RES['hpp']); ?></td>
                     <td align="right"><?php echo number_format($A_RES['hpp']*$A_RES['stokakhir']); ?></td>
@@ -117,7 +116,6 @@ if(isset($_POST['submitlaporan'])){
                 <td align="center">TOTAL PERSEDIAAN</td>
                 <td></td>
                 <td></td>
-                <td align="right"></td>
                 <td align="right"></td>
                 <td align="right"><?php echo number_format($A_TOTALPERSEDIAAN); ?></td>
             </tr>
@@ -130,13 +128,12 @@ if(isset($_POST['submitlaporan'])){
 }else{
     ?>
     <h3>Daftar Persediaan Barang per Batch</h3>
-    <a class="btn btn-warning btn-block" href="download-persediaan-batch.php" target="_blank">Download Persediaan Barang per Batch</a><br/>
+    <a class="btn btn-warning btn-block" href="download-persediaan.php" target="_blank">Download Persediaan Barang per Batch</a><br/>
     <table class="table table-bordered">
         <thead>
             <tr class="heading-table">
                 <td align="center">Nama Barang</td>
-                <td align="center">No.Batch</td>
-                <td align="center">ED</td>
+                <td align="center">Pabrik</td>
                 <td align="center">Stok</td>
                 <td align="center">HPP</td>
                 <td align="center">Persediaan</td>
@@ -145,15 +142,14 @@ if(isset($_POST['submitlaporan'])){
         <tbody>
             <?php
                 $A_TOTALPERSEDIAAN = 0;
-                $A_QUERY = "SELECT * FROM daftarharga ORDER BY namabarang";
+                $A_QUERY = "SELECT namabarang, namapabrik, sum(stokakhir) AS stokakhir, sum(stokakhir*hpp)/sum(stokakhir) AS hpp FROM daftarharga GROUP BY namabarang, namapabrik";
                 $A_SQL = mysqli_query($A_CONNECT,$A_QUERY);
                 while($A_RES = mysqli_fetch_array($A_SQL,MYSQLI_ASSOC)){
                     $A_TOTALPERSEDIAAN = $A_TOTALPERSEDIAAN + ($A_RES['hpp']*$A_RES['stokakhir']);
                     ?>
                 <tr>
                     <td><?php echo $A_RES['namabarang']; ?></td>
-                    <td><?php echo $A_RES['nomorbatch']; ?></td>
-                    <td><?php echo $A_RES['expireddate']; ?></td>
+                    <td><?php echo $A_RES['namapabrik']; ?></td>
                     <td align="right"><?php echo number_format($A_RES['stokakhir']); ?></td>
                     <td align="right"><?php echo number_format($A_RES['hpp']); ?></td>
                     <td align="right"><?php echo number_format($A_RES['hpp']*$A_RES['stokakhir']); ?></td>
@@ -167,7 +163,6 @@ if(isset($_POST['submitlaporan'])){
                 <td align="center">TOTAL PERSEDIAAN</td>
                 <td></td>
                 <td></td>
-                <td align="right"></td>
                 <td align="right"></td>
                 <td align="right"><?php echo number_format($A_TOTALPERSEDIAAN); ?></td>
             </tr>

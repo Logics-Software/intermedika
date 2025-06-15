@@ -147,9 +147,9 @@ if(isset($_POST['submitlaporan'])){
     <h3>
         <?php 
         if ($PERIODE == 'bulan') {
-            echo "Customer Non Aktif Bulan: ".namaBulan($A_BULAN)." ".$A_TAHUN; 
+            echo "Rekap Penjualan Customer Non Aktif Bulan: ".namaBulan($A_BULAN)." ".$A_TAHUN; 
         } else {
-            echo "Customer Non Aktif Tanggal: ".$TANGGALAWAL." S/D ".$TANGGALAKHIR;
+            echo "Rekap Penjualan Customer Non Aktif Tanggal: ".$TANGGALAWAL." S/D ".$TANGGALAKHIR;
         }
         ?><br/><?php
         if ($A_NAMASALESMAN==""){
@@ -162,23 +162,51 @@ if(isset($_POST['submitlaporan'])){
     <table class="table table-bordered">
         <thead>
             <tr class="heading-table">
-                <td>Nama Customer</td>
-                <td>Alamat Customer</td>
+                <td align="center">Nama Customer</td>
+                <td align="center">Januari</td>
+                <td align="center">February</td>
+                <td align="center">Maret</td>
+                <td align="center">April</td>
+                <td align="center">Mei</td>
+                <td align="center">Juni</td>
+                <td align="center">Total</td>
             </tr>
         </thead>
         <tbody>
             <?php
                 $TOTALCUSTOMER = 0;
+                $TOTALPENJUALAN = 0;
+                $TOTALBULAN1 = 0;
+                $TOTALBULAN2 = 0;
+                $TOTALBULAN3 = 0;
+                $TOTALBULAN4 = 0;
+                $TOTALBULAN5 = 0;
+                $TOTALBULAN6 = 0;
+                $TOTALTRANSAKSI = 0;
 
                 if ($A_NAMASALESMAN==""){
                     $A_SQL = mysqli_query($A_CONNECT,
-                    "SELECT DISTINCT namacustomer, alamatcustomer, kodesalesman from penjualan 
-                    WHERE tanggal BETWEEN '".$TGLPROSES1."' AND '".$TGLPROSES2."' AND kodecustomer NOT IN 
+                    "SELECT DISTINCT j.namacustomer, j.alamatcustomer, j.kodesalesman,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-01-01' AND '2025-01-31' ) AS bulan1,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-02-01' AND '2025-02-28' ) AS bulan2,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-03-01' AND '2025-03-31' ) AS bulan3,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-04-01' AND '2025-04-30' ) AS bulan4,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-05-01' AND '2025-05-30' ) AS bulan5,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-06-01' AND '2025-06-30' ) AS bulan6
+                    from penjualan j 
+                    WHERE j.tanggal BETWEEN '".$TGLPROSES1."' AND '".$TGLPROSES2."' AND j.kodecustomer NOT IN 
                     (SELECT kodecustomer FROM penjualan WHERE tanggal BETWEEN '".$TANGGALAWAL."' AND '".$TANGGALAKHIR."')");
                 } else {
                     $A_SQL = mysqli_query($A_CONNECT,
-                    "SELECT DISTINCT namacustomer, alamatcustomer, kodesalesman from penjualan 
-                    WHERE tanggal BETWEEN '".$TGLPROSES1."' AND '".$TGLPROSES2."' AND namasalesman = '".$A_NAMASALESMAN."' AND kodecustomer NOT IN 
+                    "SELECT DISTINCT j.namacustomer, j.alamatcustomer, j.kodesalesman,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-01-01' AND '2025-01-31' ) AS bulan1,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-02-01' AND '2025-02-28' ) AS bulan2,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-03-01' AND '2025-03-31' ) AS bulan3,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-04-01' AND '2025-04-30' ) AS bulan4,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-05-01' AND '2025-05-30' ) AS bulan5,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-06-01' AND '2025-06-30' ) AS bulan6
+                    from penjualan j 
+                    WHERE j.tanggal BETWEEN '".$TGLPROSES1."' AND '".$TGLPROSES2."' AND namasalesman = '".$A_NAMASALESMAN."' AND j.kodecustomer NOT IN 
                     (SELECT kodecustomer FROM penjualan WHERE tanggal BETWEEN '".$TANGGALAWAL."' AND '".$TANGGALAKHIR."')");
                 }
 
@@ -187,10 +215,24 @@ if(isset($_POST['submitlaporan'])){
                 <tr>
                     <?php
                         $TOTALCUSTOMER += 1;
+                        $TOTALPENJUALAN = $A_RES['bulan1']+$A_RES['bulan2']+$A_RES['bulan3']+$A_RES['bulan4']+$A_RES['bulan5']+$A_RES['bulan6'];
+                        $TOTALBULAN1 += $A_RES['bulan1'];
+                        $TOTALBULAN2 += $A_RES['bulan2'];
+                        $TOTALBULAN3 += $A_RES['bulan3'];
+                        $TOTALBULAN4 += $A_RES['bulan4'];
+                        $TOTALBULAN5 += $A_RES['bulan5'];
+                        $TOTALBULAN6 += $A_RES['bulan6'];
+                        $TOTALTRANSAKSI += $TOTALPENJUALAN;
                     ?>
                     <tr>
                     <td><?php echo $A_RES['namacustomer']; ?></td>
-                    <td><?php echo $A_RES['alamatcustomer']; ?></td>
+                    <td align="right"><?php echo number_format($A_RES['bulan1']); ?></td>
+                    <td align="right"><?php echo number_format($A_RES['bulan2']); ?></td>
+                    <td align="right"><?php echo number_format($A_RES['bulan3']); ?></td>
+                    <td align="right"><?php echo number_format($A_RES['bulan4']); ?></td>
+                    <td align="right"><?php echo number_format($A_RES['bulan5']); ?></td>
+                    <td align="right"><?php echo number_format($A_RES['bulan6']); ?></td>
+                    <td align="right"><?php echo number_format($TOTALPENJUALAN); ?></td>
                 </tr>
                 <?php
                 }
@@ -198,8 +240,14 @@ if(isset($_POST['submitlaporan'])){
         </tbody>
         <tfoot>
             <tr class="heading-table">
-                <td>TOTAL CUSTOMER NON AKTIF</td>
-                <td><?php echo $TOTALCUSTOMER; ?></td>
+                <td>TOTAL PENJUALAN</td>
+                <td align="right"><?php echo number_format($TOTALBULAN1); ?></td>
+                <td align="right"><?php echo number_format($TOTALBULAN2); ?></td>
+                <td align="right"><?php echo number_format($TOTALBULAN3); ?></td>
+                <td align="right"><?php echo number_format($TOTALBULAN4); ?></td>
+                <td align="right"><?php echo number_format($TOTALBULAN5); ?></td>
+                <td align="right"><?php echo number_format($TOTALBULAN6); ?></td>
+                <td align="right"><?php echo number_format($TOTALTRANSAKSI); ?></td>
             </tr>
         </tfoot>
     </table>

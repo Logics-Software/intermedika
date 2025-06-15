@@ -1,5 +1,5 @@
 <?php
-    if(isset($_SESSION['intermedika-login'])){
+    if(isset($_SESSION['indoprima-login'])){
 	?>
         <div class="container">
             <div class="row">
@@ -13,7 +13,7 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <img src="layout/intermedika.png" alt="Intermedika Online" height="50" style="margin-right:10px; float:left"/>
+                                <img src="layout/indoprima.png" alt="Indoprima Online" height="50" style="margin-right:10px; float:left"/>
                                 <a class="navbar-brand" href=""><strong>Online</strong></a>
                             </div>
                             <div id="navbar" class="collapse navbar-collapse">
@@ -27,6 +27,7 @@
                                                     <li><a href="index.php?page=daftar-harga-jual">Daftar Stok dan Harga Barang</a></li>
                                                     <li><a href="index.php?page=daftar-harga-batch">Daftar Stok dan Harga per Batch</a></li> 
                                                     <li><a href="index.php?page=daftar-persediaan">Daftar Persediaan per Batch</a></li> 
+                                                    <li><a href="index.php?page=daftar-persediaan-barang">Daftar Persediaan per Barang</a></li> 
                                                 </ul>
                                         </li>
                                         <?php
@@ -61,9 +62,20 @@
                                         <?php
                                     }
                                     ?>
-                                        <li><a href="index.php?page=omset-penjualan">Omset Sales</a></li>
-                                        <li><a href="index.php?page=omset-harian">Omset Harian</a></li>
-                                        <li><a href="index.php?page=customer-aktif">Customer Non Aktif</a></li>
+                                        <li class="dropdown">
+                                            <a href="#" data-toggle="dropdown">Omset<span class="caret"></span></a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="index.php?page=omset-penjualan">Omset Sales</a></li>
+                                                <li><a href="index.php?page=omset-harian">Omset Harian</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a href="#" data-toggle="dropdown">Customer Non Aktif<span class="caret"></span></a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="index.php?page=customer-aktif">Daftar Customer Non Aktif</a></li>
+                                                <li><a href="index.php?page=rekap-customer-aktif">Rekap Penjualan Customer Non Aktif</a></li>
+                                            </ul>
+                                        </li>
                                     <?php
                                     if ($_SESSION['privilege']=='3'){
                                         ?>
@@ -106,6 +118,9 @@
                         elseif($A_PAGE == 'daftar-persediaan'){
                             require_once 'daftar-persediaan.php';
                         }
+                        elseif($A_PAGE == 'daftar-persediaan-barang'){
+                            require_once 'daftar-persediaan-barang.php';
+                        }
                         elseif($A_PAGE == 'daftar-piutang'){
                             require_once 'daftar-penjualan.php';
                         }
@@ -120,6 +135,9 @@
                         }
                         elseif($A_PAGE == 'customer-aktif'){
                             require_once 'daftar-customer-aktif.php';
+                        }
+                        elseif($A_PAGE == 'rekap-customer-aktif'){
+                            require_once 'rekap-customer-aktif.php';
                         }
                         elseif($A_PAGE == 'manajemen-user'){
                             require_once 'manajemen-user.php';

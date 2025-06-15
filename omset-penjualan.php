@@ -132,7 +132,7 @@ if(isset($_POST['submitlaporan'])){
                     $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM omsetpenjualan WHERE kodesales = '".$_SESSION['kodesales']."' AND bulan = '".$A_BULAN."' AND tahun = '".$A_TAHUN."' ORDER BY namasales ASC");
                 }
                 while($A_RES = mysqli_fetch_array($A_SQL,MYSQLI_ASSOC)){
-                    $TOTAL_PENJUALAN = $TOTAL_PENJUALAN + $A_RES['penjualanbersih'];
+                    $TOTAL_PENJUALAN = $TOTAL_PENJUALAN + $A_RES['penjualan'];
                     $TOTAL_RETUR = $TOTAL_RETUR + $A_RES['retur'];
                     $TOTAL_PENJUALANBERSIH = $TOTAL_PENJUALANBERSIH + $A_RES['penjualanbersih'];
                     $TOTAL_PENERIMAAN = $TOTAL_PENERIMAAN + $A_RES['penerimaan'];
@@ -304,7 +304,7 @@ if(isset($_POST['submitlaporan'])){
                     $A_SQL = mysqli_query($A_CONNECT,"SELECT * FROM omsetpenjualan WHERE kodesales = '".$_SESSION['kodesales']."' AND bulan = '".$A_BULAN_TODAY."' AND tahun = '".$A_TAHUN_TODAY."' ORDER BY namasales ASC");
                 }
                 while($A_RES = mysqli_fetch_array($A_SQL,MYSQLI_ASSOC)){
-                    $TOTAL_PENJUALAN = $TOTAL_PENJUALAN + $A_RES['penjualanbersih'];
+                    $TOTAL_PENJUALAN = $TOTAL_PENJUALAN + $A_RES['penjualan'];
                     $TOTAL_RETUR = $TOTAL_RETUR + $A_RES['retur'];
                     $TOTAL_PENJUALANBERSIH = $TOTAL_PENJUALANBERSIH + $A_RES['penjualanbersih'];
                     $TOTAL_PENERIMAAN = $TOTAL_PENERIMAAN + $A_RES['penerimaan'];
