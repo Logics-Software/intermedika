@@ -143,6 +143,108 @@ if(isset($_POST['submitlaporan'])){
     }
     $TGLPROSES1 = date('Y-m-d',(strtotime ( '-182 day' , strtotime ( $TANGGALAWAL) ) ));
     $TGLPROSES2 = date('Y-m-d',(strtotime ( '-1 day' , strtotime ( $TANGGALAWAL) ) ));
+
+    $BULAN6 = date('m', strtotime($TANGGALAWAL))-1;
+    if ($BULAN6 < 0) {
+        $BULAN6 = 12;
+        $TAHUN6 = date('Y', strtotime($TANGGALAWAL))-1;
+    } else {
+        $TAHUN6 = date('Y', strtotime($TANGGALAWAL));
+    }
+
+    $BULAN1 = $BULAN6 - 5;
+    if ($BULAN1 < 0) {
+        $BULAN1 = 12 + $BULAN1;
+        $TAHUN1 = $TAHUN6 - 1;
+    } else {
+        $TAHUN1 = $TAHUN6;
+    }
+
+    $BULAN2 = $BULAN1 + 1;
+    if ($BULAN2 > 12) {
+        $BULAN2 = 01;
+        $TAHUN2 = $TAHUN1 + 1;
+    } else {
+        $TAHUN2 = $TAHUN1;
+    }
+
+    $BULAN3 = $BULAN2 + 1;
+    if ($BULAN3 > 12) {
+        $BULAN3 = 01;
+        $TAHUN3 = $TAHUN2 + 1;
+    } else {
+        $TAHUN3 = $TAHUN2;
+    }
+
+    $BULAN4 = $BULAN3 + 1;
+    if ($BULAN4 > 12) {
+        $BULAN4 = 01;
+        $TAHUN4 = $TAHUN3 + 1;
+    } else {
+        $TAHUN4 = $TAHUN3;
+    }   
+
+   $BULAN5 = $BULAN4 + 1;
+    if ($BULAN5 > 12) {
+        $BULAN5 = 01;
+        $TAHUN5 = $TAHUN4 + 1;
+    } else {
+        $TAHUN5 = $TAHUN4;
+    }
+
+    $BULAN1 = sprintf('%02d', $BULAN1);
+    $BULAN2 = sprintf('%02d', $BULAN2);
+    $BULAN3 = sprintf('%02d', $BULAN3);
+    $BULAN4 = sprintf('%02d', $BULAN4);
+    $BULAN5 = sprintf('%02d', $BULAN5);
+    $BULAN6 = sprintf('%02d', $BULAN6);
+
+    $OBJBULAN1 = DateTime::createFromFormat('!m', $BULAN1);
+    $NMBULAN1 = $OBJBULAN1->format('F');
+    $OBJBULAN2 = DateTime::createFromFormat('!m', $BULAN2);
+    $NMBULAN2 = $OBJBULAN2->format('F');
+    $OBJBULAN3 = DateTime::createFromFormat('!m', $BULAN3);
+    $NMBULAN3 = $OBJBULAN3->format('F');
+    $OBJBULAN4 = DateTime::createFromFormat('!m', $BULAN4);
+    $NMBULAN4 = $OBJBULAN4->format('F');
+    $OBJBULAN5 = DateTime::createFromFormat('!m', $BULAN5);
+    $NMBULAN5 = $OBJBULAN5->format('F');
+    $OBJBULAN6 = DateTime::createFromFormat('!m', $BULAN6);
+    $NMBULAN6 = $OBJBULAN6->format('F');
+
+    $TGAWAL1 = $TAHUN1."-".$BULAN1."-01";
+    $TGAWAL2 = $TAHUN2."-".$BULAN2."-01";
+    $TGAWAL3 =  $TAHUN3."-".$BULAN3."-01";
+    $TGAWAL4 =  $TAHUN4."-".$BULAN4."-01";
+    $TGAWAL5 =  $TAHUN5."-".$BULAN5."-01";
+    $TGAWAL6 =  $TAHUN6."-".$BULAN6."-01";
+    
+    $TGAKHIR1 = new DateTime($TGAWAL1);
+    $TGAKHIR1->modify('last day of this month');
+    $TGAKHIR1->format('Y-m-d');
+    $TGAKHIR2 = new DateTime($TGAWAL2);
+    $TGAKHIR2->modify('last day of this month');
+    $TGAKHIR2->format('Y-m-d');
+    $TGAKHIR3 = new DateTime($TGAWAL3);
+    $TGAKHIR3->modify('last day of this month');
+    $TGAKHIR3->format('Y-m-d');
+    $TGAKHIR4 = new DateTime($TGAWAL4);
+    $TGAKHIR4->modify('last day of this month');
+    $TGAKHIR4->format('Y-m-d');
+    $TGAKHIR5 = new DateTime($TGAWAL5);
+    $TGAKHIR5->modify('last day of this month');
+    $TGAKHIR5->format('Y-m-d');
+    $TGAKHIR6 = new DateTime($TGAWAL6);
+    $TGAKHIR6->modify('last day of this month');
+    $TGAKHIR6->format('Y-m-d');
+
+    $TGAKHIR1 = date_format($TGAKHIR1, 'Y-m-d');
+    $TGAKHIR2 = date_format($TGAKHIR2, 'Y-m-d');
+    $TGAKHIR3 = date_format($TGAKHIR3, 'Y-m-d');
+    $TGAKHIR4 = date_format($TGAKHIR4, 'Y-m-d');
+    $TGAKHIR5 = date_format($TGAKHIR5, 'Y-m-d');
+    $TGAKHIR6 = date_format($TGAKHIR6, 'Y-m-d');
+
     ?>
     <h3>
         <?php 
@@ -162,14 +264,22 @@ if(isset($_POST['submitlaporan'])){
     <table class="table table-bordered">
         <thead>
             <tr class="heading-table">
-                <td align="center">Nama Customer</td>
-                <td align="center">Januari</td>
-                <td align="center">February</td>
-                <td align="center">Maret</td>
-                <td align="center">April</td>
-                <td align="center">Mei</td>
-                <td align="center">Juni</td>
-                <td align="center">Total</td>
+                <td align="center" rowspan="2">Nama Customer</td>
+                <td align="center"><?php echo $NMBULAN1?></td>
+                <td align="center"><?php echo $NMBULAN2?></td>
+                <td align="center"><?php echo $NMBULAN3?></td>
+                <td align="center"><?php echo $NMBULAN4?></td>
+                <td align="center"><?php echo $NMBULAN5?></td>
+                <td align="center"><?php echo $NMBULAN6?></td>
+                <td align="center"  rowspan="2">TOTAL</td>
+            </tr>
+            <tr class="heading-table">
+                <td align="center"><?php echo $TAHUN1?></td>
+                <td align="center"><?php echo $TAHUN2?></td>
+                <td align="center"><?php echo $TAHUN3?></td>
+                <td align="center"><?php echo $TAHUN4?></td>
+                <td align="center"><?php echo $TAHUN5?></td>
+                <td align="center"><?php echo $TAHUN6?></td>
             </tr>
         </thead>
         <tbody>
@@ -187,24 +297,24 @@ if(isset($_POST['submitlaporan'])){
                 if ($A_NAMASALESMAN==""){
                     $A_SQL = mysqli_query($A_CONNECT,
                     "SELECT DISTINCT j.namacustomer, j.alamatcustomer, j.kodesalesman,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-01-01' AND '2025-01-31' ) AS bulan1,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-02-01' AND '2025-02-28' ) AS bulan2,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-03-01' AND '2025-03-31' ) AS bulan3,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-04-01' AND '2025-04-30' ) AS bulan4,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-05-01' AND '2025-05-30' ) AS bulan5,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-06-01' AND '2025-06-30' ) AS bulan6
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND (p.tanggal BETWEEN '".$TGAWAL1."' AND '".$TGAKHIR1."')) AS bulan1,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL2."' AND '".$TGAKHIR2."') AS bulan2,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL3."' AND '".$TGAKHIR3."') AS bulan3,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL4."' AND '".$TGAKHIR4."') AS bulan4,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL5."' AND '".$TGAKHIR5."') AS bulan5,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL6."' AND '".$TGAKHIR6."') AS bulan6
                     from penjualan j 
                     WHERE j.tanggal BETWEEN '".$TGLPROSES1."' AND '".$TGLPROSES2."' AND j.kodecustomer NOT IN 
                     (SELECT kodecustomer FROM penjualan WHERE tanggal BETWEEN '".$TANGGALAWAL."' AND '".$TANGGALAKHIR."')");
                 } else {
                     $A_SQL = mysqli_query($A_CONNECT,
                     "SELECT DISTINCT j.namacustomer, j.alamatcustomer, j.kodesalesman,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-01-01' AND '2025-01-31' ) AS bulan1,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-02-01' AND '2025-02-28' ) AS bulan2,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-03-01' AND '2025-03-31' ) AS bulan3,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-04-01' AND '2025-04-30' ) AS bulan4,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-05-01' AND '2025-05-30' ) AS bulan5,
-                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '2025-06-01' AND '2025-06-30' ) AS bulan6
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL1."' AND '".$TGAKHIR1."') AS bulan1,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL2."' AND '".$TGAKHIR2."') AS bulan2,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL3."' AND '".$TGAKHIR3."') AS bulan3,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL4."' AND '".$TGAKHIR4."') AS bulan4,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL5."' AND '".$TGAKHIR5."') AS bulan5,
+                    (SELECT SUM(p.nilaipenjualan) from penjualan p WHERE p.kodecustomer = j.kodecustomer AND p.tanggal BETWEEN '".$TGAWAL6."' AND '".$TGAKHIR6."') AS bulan6
                     from penjualan j 
                     WHERE j.tanggal BETWEEN '".$TGLPROSES1."' AND '".$TGLPROSES2."' AND namasalesman = '".$A_NAMASALESMAN."' AND j.kodecustomer NOT IN 
                     (SELECT kodecustomer FROM penjualan WHERE tanggal BETWEEN '".$TANGGALAWAL."' AND '".$TANGGALAKHIR."')");
