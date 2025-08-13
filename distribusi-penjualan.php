@@ -241,6 +241,7 @@ if(isset($_POST['submitlaporan'])){
                 <td align="right"><?php echo number_format($A_RES['hargarata']); ?></td>
                 <td align="right"><?php echo number_format($A_RES['totalharga']); ?></td>
                 </tr>
+                </tbody>
                 <?php
                 $TOTALQTY += $A_RES['jumlah'];
                 $TOTALPENJUALAN += $A_RES['totalharga'];
