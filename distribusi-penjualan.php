@@ -200,17 +200,19 @@ if(isset($_POST['submitlaporan'])){
                 }
 
                 if ($NAMACUSTOMER != $A_RES['namacustomer']) {
+                    if ($TOTALQTY != 0) {
                     ?>
                         <tr>
                         <td></td>
                         <td></td>
-                        <td>TOTAL</td>
+                        <td align="center" style="font-weight: bold">TOTAL</td>
                         <td align="right"><?php echo number_format($TOTALQTY); ?></td>
                         <td align="right"></td>
                         <td align="right"><?php echo number_format($TOTALPENJUALAN); ?></td>
                         </tr>
                     <?php
-                    echo "<span style = 'color: red;'><b>";
+                    }
+                    echo "<span style = 'font-size: 16px; color: red;'><b>";
                     echo $A_RES['namacustomer'];
                     echo "</b></span>";
                     $NAMACUSTOMER = $A_RES['namacustomer'];
@@ -218,7 +220,7 @@ if(isset($_POST['submitlaporan'])){
                     <table class="table table-bordered">
                         <thead>
                             <tr class="heading-table">
-                                <td style='width: 33%' align="center">Nama Customer</td>
+                                <td style='width: 33%' align="center">Nama Barang</td>
                                 <td style='width: 8%' align="center">Sat.</td>
                                 <td style='width: 25%' align="center">Pabrik</td>
                                 <td style='width: 10%' align="center">Jumlah</td>
@@ -226,7 +228,6 @@ if(isset($_POST['submitlaporan'])){
                                 <td style='width: 12%' align="center">Total</td>
                             </tr>
                         </thead>
-                        <tbody>
                     <?php
                     $TOTALQTY = 0;
                     $TOTALPENJUALAN = 0;
@@ -241,7 +242,6 @@ if(isset($_POST['submitlaporan'])){
                 <td align="right"><?php echo number_format($A_RES['hargarata']); ?></td>
                 <td align="right"><?php echo number_format($A_RES['totalharga']); ?></td>
                 </tr>
-                </tbody>
                 <?php
                 $TOTALQTY += $A_RES['jumlah'];
                 $TOTALPENJUALAN += $A_RES['totalharga'];
