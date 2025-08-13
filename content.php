@@ -74,6 +74,7 @@
                                             <ul class="dropdown-menu">
                                                 <li><a href="index.php?page=customer-aktif">Daftar Customer Non Aktif</a></li>
                                                 <li><a href="index.php?page=rekap-customer-aktif">Rekap Penjualan Customer Non Aktif</a></li>
+                                                <li><a href="index.php?page=distribusi-penjualan">Rekap Distribusi Penjualan</a></li> 
                                             </ul>
                                         </li>
                                     <?php
@@ -138,6 +139,9 @@
                         }
                         elseif($A_PAGE == 'rekap-customer-aktif'){
                             require_once 'rekap-customer-aktif.php';
+                        }
+                        elseif($A_PAGE == 'distribusi-penjualan'){
+                            require_once 'distribusi-penjualan.php';
                         }
                         elseif($A_PAGE == 'manajemen-user'){
                             require_once 'manajemen-user.php';
