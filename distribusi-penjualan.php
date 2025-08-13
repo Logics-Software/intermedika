@@ -162,18 +162,17 @@ if(isset($_POST['submitlaporan'])){
 
         if ($A_NAMASALESMAN==""){
             $A_SQL = mysqli_query($A_CONNECT,
-            "SELECT DISTINCT j.namasalesman, j.kodesalesman, j.namacustomer, j.alamatcustomer, b.namabarang, b.satuan, b.namapabrik,
-            SUM(d.jumlah) AS jumlah, SUM(d.totalharga)/SUM(D.Jumlah) AS hargarata, sum(d.totalharga) AS totalharga
+            "SELECT j.namasalesman, j.kodesalesman, j.namacustomer, j.alamatcustomer, b.namabarang, b.satuan, b.namapabrik,
+            SUM(d.jumlah) AS jumlah, SUM(d.totalharga)/SUM(d.Jumlah) AS hargarata, sum(d.totalharga) AS totalharga
             from penjualan j
             inner join detailpenjualan d on j.nopenjualan = d.nopenjualan
             inner join masterbarang b on d.kodebarang = b.kodebarang
             WHERE j.tanggal BETWEEN '".$TANGGALAWAL."' AND '".$TANGGALAKHIR."' 
-            GROUP BY j.namasalesman, j.kodesalesman, j.namacustomer, j.alamatcustomer, b.namabarang, b.satuan, b.namapabrik
-            ORDER BY j.namasalesman, j.kodesalesman, j.namacustomer, j.alamatcustomer, b.namabarang, b.satuan, b.namapabrik");
+            GROUP BY j.namasalesman, j.kodesalesman, j.namacustomer, j.alamatcustomer, b.namabarang, b.satuan, b.namapabrik");
         } else {
             $A_SQL = mysqli_query($A_CONNECT,
-            "SELECT DISTINCT j.namasalesman, j.kodesalesman, j.namacustomer, j.alamatcustomer, b.namabarang, b.satuan, b.namapabrik,
-            SUM(d.jumlah) AS jumlah, SUM(d.totalharga)/SUM(D.Jumlah) AS hargarata, sum(d.totalharga) AS totalharga
+            "SELECT j.namasalesman, j.kodesalesman, j.namacustomer, j.alamatcustomer, b.namabarang, b.satuan, b.namapabrik,
+            SUM(d.jumlah) AS jumlah, SUM(d.totalharga)/SUM(d.Jumlah) AS hargarata, sum(d.totalharga) AS totalharga
             from penjualan j
             inner join detailpenjualan d on j.nopenjualan = d.nopenjualan
             inner join masterbarang b on d.kodebarang = b.kodebarang
