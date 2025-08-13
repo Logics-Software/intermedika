@@ -183,15 +183,7 @@ if(isset($_POST['submitlaporan'])){
 
         while($A_RES = mysqli_fetch_array($A_SQL,MYSQLI_ASSOC)){
                 if ($NAMASALESMAN != $A_RES['namasalesman']) {
-                    echo "<div style=  'display: flex;
-                                        margin: 0;
-                                        font-size: 20px;
-                                        padding-bottom: 10px;
-                                        flex-direction: row;
-                                        flex-wrap: wrap;
-                                        justify-content: center;
-                                        align-items: center;
-                                        align-content: center;
+                    echo "<div style=  'font-size:18px; font-weight: bold; text-align: center;
                                         background-color: yellow;'><br/>";
                     echo "SALES: ".$A_RES['namasalesman'];
                     echo "</div>";
@@ -203,13 +195,15 @@ if(isset($_POST['submitlaporan'])){
                     if ($TOTALQTY != 0) {
                     ?>
                         <tr>
-                        <td></td>
-                        <td></td>
-                        <td align="center" style="font-weight: bold">TOTAL</td>
-                        <td align="right"><?php echo number_format($TOTALQTY); ?></td>
-                        <td align="right"></td>
-                        <td align="right"><?php echo number_format($TOTALPENJUALAN); ?></td>
+                            <td></td>
+                            <td></td>
+                            <td align="center" style="font-weight: bold">TOTAL</td>
+                            <td align="right"><?php echo number_format($TOTALQTY); ?></td>
+                            <td align="right"></td>
+                            <td align="right"><?php echo number_format($TOTALPENJUALAN); ?></td>
                         </tr>
+                        </tbody>
+                        </table>
                     <?php
                     }
                     echo "<span style = 'font-size: 16px; color: red;'><b>";
@@ -228,6 +222,7 @@ if(isset($_POST['submitlaporan'])){
                                 <td style='width: 12%' align="center">Total</td>
                             </tr>
                         </thead>
+                        <tbody>
                     <?php
                     $TOTALQTY = 0;
                     $TOTALPENJUALAN = 0;
@@ -235,19 +230,18 @@ if(isset($_POST['submitlaporan'])){
 
                 ?>
                 <tr>
-                <td><?php echo $A_RES['namabarang']; ?></td>
-                <td><?php echo $A_RES['satuan']; ?></td>
-                <td><?php echo $A_RES['namapabrik']; ?></td>
-                <td align="right"><?php echo number_format($A_RES['jumlah']); ?></td>
-                <td align="right"><?php echo number_format($A_RES['hargarata']); ?></td>
-                <td align="right"><?php echo number_format($A_RES['totalharga']); ?></td>
+                    <td><?php echo $A_RES['namabarang']; ?></td>
+                    <td><?php echo $A_RES['satuan']; ?></td>
+                    <td><?php echo $A_RES['namapabrik']; ?></td>
+                    <td align="right"><?php echo number_format($A_RES['jumlah']); ?></td>
+                    <td align="right"><?php echo number_format($A_RES['hargarata']); ?></td>
+                    <td align="right"><?php echo number_format($A_RES['totalharga']); ?></td>
                 </tr>
                 <?php
                 $TOTALQTY += $A_RES['jumlah'];
                 $TOTALPENJUALAN += $A_RES['totalharga'];
         }
         ?>
-    </table>
 
     <?php
     if ($PERIODE == 'bulan') {
