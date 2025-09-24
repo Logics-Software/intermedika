@@ -74,9 +74,9 @@
                                             <ul class="dropdown-menu">
                                                 <!-- <li><a href="index.php?page=customer-aktif">Daftar Customer Non Aktif</a></li> -->
                                                 <li><a href="index.php?page=rekap-customer-aktif">Rekap Penjualan Customer Non Aktif</a></li>
-                                                <li><a href="index.php?page=distribusi-penjualan">Rekap Distribusi Penjualan</a></li> 
                                             </ul>
                                         </li>
+                                        <li><a href="index.php?page=distribusi-penjualan">Rekap Distribusi Penjualan</a></li> 
                                     <?php
                                     if ($_SESSION['privilege']=='3'){
                                         ?>
