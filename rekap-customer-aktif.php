@@ -336,13 +336,13 @@ if(isset($_POST['submitlaporan'])){
                     ?>
                     <tr>
                     <td><?php echo $A_RES['namacustomer']; ?></td>
-                    <td align="right"><?php echo number_format($A_RES['bulan1']); ?></td>
-                    <td align="right"><?php echo number_format($A_RES['bulan2']); ?></td>
-                    <td align="right"><?php echo number_format($A_RES['bulan3']); ?></td>
-                    <td align="right"><?php echo number_format($A_RES['bulan4']); ?></td>
-                    <td align="right"><?php echo number_format($A_RES['bulan5']); ?></td>
-                    <td align="right"><?php echo number_format($A_RES['bulan6']); ?></td>
-                    <td align="right"><?php echo number_format($TOTALPENJUALAN); ?></td>
+                    <td align="right"><?php echo number_format((float)$A_RES['bulan1']); ?></td>
+                    <td align="right"><?php echo number_format((float)$A_RES['bulan2']); ?></td>
+                    <td align="right"><?php echo number_format((float)$A_RES['bulan3']); ?></td>
+                    <td align="right"><?php echo number_format((float)$A_RES['bulan4']); ?></td>
+                    <td align="right"><?php echo number_format((float)$A_RES['bulan5']); ?></td>
+                    <td align="right"><?php echo number_format((float)$A_RES['bulan6']); ?></td>
+                    <td align="right"><?php echo number_format((float)$TOTALPENJUALAN); ?></td>
                 </tr>
                 <?php
                 }
@@ -351,13 +351,13 @@ if(isset($_POST['submitlaporan'])){
         <tfoot>
             <tr class="heading-table">
                 <td>TOTAL PENJUALAN</td>
-                <td align="right"><?php echo number_format($TOTALBULAN1); ?></td>
-                <td align="right"><?php echo number_format($TOTALBULAN2); ?></td>
-                <td align="right"><?php echo number_format($TOTALBULAN3); ?></td>
-                <td align="right"><?php echo number_format($TOTALBULAN4); ?></td>
-                <td align="right"><?php echo number_format($TOTALBULAN5); ?></td>
-                <td align="right"><?php echo number_format($TOTALBULAN6); ?></td>
-                <td align="right"><?php echo number_format($TOTALTRANSAKSI); ?></td>
+                <td align="right"><?php echo number_format((float)$TOTALBULAN1); ?></td>
+                <td align="right"><?php echo number_format((float)$TOTALBULAN2); ?></td>
+                <td align="right"><?php echo number_format((float)$TOTALBULAN3); ?></td>
+                <td align="right"><?php echo number_format((float)$TOTALBULAN4); ?></td>
+                <td align="right"><?php echo number_format((float)$TOTALBULAN5); ?></td>
+                <td align="right"><?php echo number_format((float)$TOTALBULAN6); ?></td>
+                <td align="right"><?php echo number_format((float)$TOTALTRANSAKSI); ?></td>
             </tr>
         </tfoot>
     </table>

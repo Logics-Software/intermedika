@@ -54,6 +54,11 @@
           $this->prosenpenerimaan = htmlspecialchars(strip_tags($this->prosenpenerimaan));
           $this->lembar = htmlspecialchars(strip_tags($this->lembar));
 
+          // Validation: jika kodesales kosong, batalkan penyimpanan
+          if ($this->kodesales === '' ) {
+            return false;
+          }
+
           // Bind data
           $stmt->bindParam(':kodesales', $this->kodesales);
           $stmt->bindParam(':namasales', $this->namasales);

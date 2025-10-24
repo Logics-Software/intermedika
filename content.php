@@ -73,16 +73,18 @@
                                             <a href="#" data-toggle="dropdown">Customer Non Aktif<span class="caret"></span></a>
                                             <ul class="dropdown-menu">
                                                 <!-- <li><a href="index.php?page=customer-aktif">Daftar Customer Non Aktif</a></li> -->
-                                                <li><a href="index.php?page=rekap-customer-aktif">Rekap Penjualan Customer Non Aktif</a></li>
+                                                <li><a href="index.php?page=rekap-customer-aktif">Customer Non Aktif</a></li>
                                             </ul>
                                         </li>
                                         <li>
-                                            <a href="index.php?page=distribusi-penjualan">Rekap Distribusi Penjualan</a>
+                                            <a href="index.php?page=distribusi-penjualan">Distribusi Penjualan</a>
                                         </li> 
-                                    <?php
+                                        <li>
+                                            <a href="index.php?page=barang-non-aktif">Barang Non Aktif</a>
+                                        </li>                                    <?php
                                     if ($_SESSION['privilege']=='3'){
                                         ?>
-                                        <li><a href="index.php?page=manajemen-user">Manajemen User</a></li>
+                                        <li><a href="index.php?page=manajemen-user">User</a></li>
                                         <?php
                                     }
                                     ?>
@@ -144,6 +146,9 @@
                         }
                         elseif($A_PAGE == 'distribusi-penjualan'){
                             require_once 'distribusi-penjualan.php';
+                        }
+                        elseif($A_PAGE == 'barang-non-aktif'){
+                            require_once 'barang-non-aktif.php';
                         }
                         elseif($A_PAGE == 'manajemen-user'){
                             require_once 'manajemen-user.php';
