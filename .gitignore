@@ -1,0 +1,28 @@
+# Uploads
+uploads/*
+!uploads/.htaccess
+!uploads/.gitkeep
+
+config/database.php
+config/app.php
+
+database/*
+VB6/*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Config (if sensitive)
+# config/database.php
+

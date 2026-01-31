@@ -1,0 +1,19 @@
+# Allow access to .well-known directory
+Options +FollowSymLinks
+RewriteEngine Off
+
+# Set correct MIME type for JSON files
+<IfModule mod_mime.c>
+    AddType application/json .json
+</IfModule>
+
+# Allow access from all origins (for Android App Links verification)
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Content-Type "application/json; charset=UTF-8"
+</IfModule>
+
+# Ensure files are served directly without any processing
+<FilesMatch "assetlinks\.json">
+    ForceType application/json
+</FilesMatch>

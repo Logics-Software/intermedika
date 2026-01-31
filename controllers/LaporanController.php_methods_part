@@ -1,0 +1,136 @@
+    private function getAllBarangTidakTerjualData($filters) {
+        $params = [];
+        $subqueryParams = [];
+        $dateWhere = "1=1";
+
+        // Build date filter for the subquery
+        if ($filters['periode'] === 'today') {
+            $dateWhere = "hp.tanggalpenjualan >= CURDATE() AND hp.tanggalpenjualan < CURDATE() + INTERVAL 1 DAY";
+        } elseif ($filters['periode'] === 'this_month') {
+            $dateWhere = "hp.tanggalpenjualan >= DATE_FORMAT(CURDATE(), '%Y-%m-01') AND hp.tanggalpenjualan < DATE_FORMAT(CURDATE(), '%Y-%m-01') + INTERVAL 1 MONTH";
+        } elseif ($filters['periode'] === 'this_year') {
+            $dateWhere = "hp.tanggalpenjualan >= DATE_FORMAT(CURDATE(), '%Y-01-01') AND hp.tanggalpenjualan < DATE_FORMAT(CURDATE(), '%Y-01-01') + INTERVAL 1 YEAR";
+        } elseif ($filters['periode'] === 'custom' && !empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $dateWhere = "hp.tanggalpenjualan BETWEEN ? AND ?";
+            $subqueryParams[] = $filters['start_date'];
+            $subqueryParams[] = $filters['end_date'];
+        }
+
+        // Build the complete SQL with subquery parameters inline
+        $subquerySql = "SELECT DISTINCT dp.kodebarang
+                        FROM detailpenjualan dp
+                        JOIN headerpenjualan hp ON dp.nopenjualan = hp.nopenjualan
+                        WHERE {$dateWhere}";
+
+        // Main query to get items NOT sold in the period
+        $sql = "SELECT 
+                    mb.kodebarang,
+                    mb.namabarang,
+                    mb.satuan,
+                    tp.namapabrik,
+                    mb.stokakhir
+                FROM masterbarang mb
+                LEFT JOIN tabelpabrik tp ON mb.kodepabrik = tp.kodepabrik
+                WHERE mb.stokakhir > 0
+                AND mb.kodebarang NOT IN ({$subquerySql})";
+
+        // Add subquery params first
+        $params = array_merge($params, $subqueryParams);
+
+        // Add search filter
+        if (!empty($filters['search'])) {
+            $sql .= " AND mb.namabarang LIKE ?";
+            $params[] = "%" . $filters['search'] . "%";
+        }
+
+        // Add sorting
+        $sortBy = $filters['sort_by'] ?? 'namabarang';
+        $sortOrder = $filters['sort_order'] ?? 'ASC';
+        
+        // Map sort columns to actual table columns
+        $sortColumn = $sortBy === 'namapabrik' ? 'tp.namapabrik' : 'mb.namabarang';
+        
+        $sql .= " ORDER BY {$sortColumn} {$sortOrder}";
+
+        return $this->db->fetchAll($sql, $params);
+    }
+
+    private function exportExcelBarangTidakTerjual($data, $filters) {
+        $filename = 'Laporan_Barang_Tidak_Terjual_' . date('YmdHis') . '.csv';
+        
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        // Add BOM for UTF-8 to ensure Excel displays correctly
+        echo "\xEF\xBB\xBF";
+
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['No', 'Nama Barang', 'Satuan', 'Pabrik', 'Stok'], ';');
+
+        // Data
+        $no = 1;
+        foreach ($data as $row) {
+            fputcsv($output, [
+                $no++,
+                $row['namabarang'] ?? '-',
+                $row['satuan'] ?? '-',
+                $row['namapabrik'] ?? '-',
+                $row['stokakhir'] ?? '0'
+            ], ';');
+        }
+
+        fclose($output);
+    }
+
+    private function exportPDFBarangTidakTerjual($data, $filters) {
+        $this->generateAndDownloadPDFBarangTidakTerjual($data, $filters);
+    }
+
+    private function generateAndDownloadPDFBarangTidakTerjual($data, $filters) {
+        $filename = 'Laporan_Barang_Tidak_Terjual_' . date('Y-m-d_H-i-s') . '.pdf';
+        
+        $pdf = new LaporanPDF('P', 'mm', 'A4');
+        $pdf->reportTitle = 'Laporan Barang Tidak Terjual';
+        
+        // Buat subtitle periode
+        $periodeText = '';
+        if ($filters['periode'] === 'today') {
+            $periodeText = 'Hari Ini (' . date('d/m/Y') . ')';
+        } elseif ($filters['periode'] === 'this_month') {
+            $periodeText = 'Bulan Ini (' . date('F Y') . ')';
+        } elseif ($filters['periode'] === 'this_year') {
+            $periodeText = 'Tahun Ini (' . date('Y') . ')';
+        } elseif ($filters['periode'] === 'custom') {
+            $periodeText = 'Periode: ' . $filters['start_date'] . ' s/d ' . $filters['end_date'];
+        }
+        
+        $pdf->reportSubtitle = $periodeText . "\nTotal Item: " . count($data);
+        $pdf->printedBy = Auth::user()['namalengkap'] ?? 'System';
+        $pdf->AliasNbPages();
+        $pdf->AddPage();
+
+        $header = ['No', 'Nama Barang', 'Satuan', 'Pabrik', 'Stok'];
+        // Sesuaikan lebar kolom agar pas A4 (kurang lebih 190mm usable width)
+        // 10 + 80 + 20 + 50 + 30 = 190
+        $widths = [10, 80, 25, 45, 30];
+
+        $pdf->TableHeader($header, $widths);
+
+        $pdf->SetFont('Helvetica', '', 8);
+        $no = 1;
+
+        foreach ($data as $d) {
+            $pdf->Cell($widths[0], 6, $no++, 1, 0, 'C');
+            $pdf->Cell($widths[1], 6, substr($d['namabarang'] ?? '-', 0, 45), 1, 0, 'L');
+            $pdf->Cell($widths[2], 6, $d['satuan'] ?? '-', 1, 0, 'C');
+            $pdf->Cell($widths[3], 6, substr($d['namapabrik'] ?? '-', 0, 25), 1, 0, 'L');
+            $pdf->Cell($widths[4], 6, number_format((float)($d['stokakhir'] ?? 0), 0, ',', '.'), 1, 0, 'R');
+            $pdf->Ln();
+        }
+
+        $pdf->Output('D', $filename);
+    }

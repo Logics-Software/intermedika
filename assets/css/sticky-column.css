@@ -1,0 +1,120 @@
+/* Sticky Column CSS - Reusable untuk table dengan sticky column di mobile */
+
+/* Pastikan dropdown Choices.js tidak tertutup oleh sticky column (semua layar) */
+.choices__list--dropdown {
+  z-index: 1000 !important;
+}
+
+.choices__list {
+  z-index: 1000 !important;
+}
+
+.choices {
+  z-index: 1000 !important;
+}
+
+.choices.is-open {
+  z-index: 1000 !important;
+}
+
+@media (max-width: 767.98px) {
+  /* Container table dengan sticky column */
+  .table-sticky-column {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+
+  .table-sticky-column table {
+    min-width: 800px;
+    border-collapse: separate;
+    position: relative;
+  }
+
+  /* Sembunyikan kolom pertama (No) di mobile jika diperlukan */
+  .table-sticky-column.hide-first-col thead th:first-child,
+  .table-sticky-column.hide-first-col tbody td:first-child,
+  .table-sticky-column.hide-first-col tfoot td:first-child {
+    display: none;
+  }
+
+  /* Kolom sticky - menggunakan class .sticky-col */
+  .table-sticky-column th.sticky-col,
+  .table-sticky-column td.sticky-col {
+    position: relative;
+    z-index: 10;
+    min-width: 150px;
+    width: 180px;
+    background-color: #fff;
+    box-shadow: 1px 0 1px rgba(0, 0, 0, 0);
+    border-right: 0px solid #dee2e6;
+  }
+
+  .table-sticky-column thead th.sticky-col {
+    background-color: #f9fafb;
+    z-index: 11;
+  }
+
+  .table-sticky-column tbody tr:nth-child(even) td.sticky-col {
+    background-color: #fff;
+  }
+
+  .table-sticky-column tbody tr:nth-child(odd) td.sticky-col {
+    background-color: #efeff0;
+  }
+
+  .table-sticky-column tbody tr:hover td.sticky-col {
+    background-color: #e9ecef;
+  }
+
+  /* Styling khusus untuk row total/info */
+  .table-sticky-column tbody tr.table-info td.sticky-col {
+    background-color: #d1ecf1 !important;
+  }
+
+  /* Styling untuk tfoot (grand total) */
+  .table-sticky-column tfoot tr.table-warning td.sticky-col {
+    background-color: #fff3cd !important;
+    box-shadow: 1px 0 1px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid #dee2e6;
+  }
+
+  .table-sticky-column tfoot tr.table-warning td {
+    background-color: #fff3cd !important;
+  }
+
+  /* Pastikan tfoot memiliki border yang konsisten */
+  .table-sticky-column tfoot tr td {
+    border-top: 2px solid #ffc107;
+    padding: 0.75rem;
+    vertical-align: middle;
+  }
+
+  /* Pastikan tfoot sticky column memiliki styling yang sama */
+  .table-sticky-column tfoot tr td.sticky-col {
+    padding: 0.75rem;
+    vertical-align: middle;
+  }
+
+  /* Class untuk sticky aktif */
+  .table-sticky-column th.sticky-col.sticky-active,
+  .table-sticky-column td.sticky-col.sticky-active {
+    position: sticky;
+    left: 0;
+  }
+
+  /* Sembunyikan kolom alamat customer di mobile */
+  .hide-alamat-mobile,
+  th.hide-alamat-mobile,
+  td.hide-alamat-mobile {
+    display: none !important;
+  }
+
+  /* Reduce width of sticky column on mobile for dashboard overdue invoices */
+  .table-sticky-column th.sticky-col-faktur,
+  .table-sticky-column td.sticky-col-faktur {
+    min-width: 100px !important;
+    max-width: 120px !important;
+    width: 110px !important;
+  }
+}

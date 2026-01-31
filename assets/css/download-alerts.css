@@ -1,0 +1,163 @@
+/**
+ * Download Alert Styles
+ * Custom modal alerts for file download status
+ */
+
+.download-alert-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.download-alert-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.download-alert-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+  animation: slideIn 0.3s ease-out;
+}
+
+.download-alert-content.success {
+  border-top: 4px solid #28a745;
+}
+
+.download-alert-content.error {
+  border-top: 4px solid #dc3545;
+}
+
+.download-alert-header {
+  display: flex;
+  align-items: center;
+  padding: 20px 20px 10px;
+  position: relative;
+}
+
+.download-alert-icon {
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.download-alert-content.success .download-alert-icon {
+  color: #28a745;
+}
+
+.download-alert-content.error .download-alert-icon {
+  color: #dc3545;
+}
+
+.download-alert-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  flex-grow: 1;
+}
+
+.download-alert-close {
+  background: none;
+  border: none;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.download-alert-close:hover {
+  background: #f8f9fa;
+  color: #495057;
+}
+
+.download-alert-body {
+  padding: 0 20px 20px;
+}
+
+.download-alert-body p {
+  margin: 0;
+  color: #6c757d;
+  line-height: 1.5;
+}
+
+.download-alert-footer {
+  padding: 0 20px 20px;
+  text-align: right;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Loading state styles */
+.downloading {
+  position: relative;
+}
+
+.downloading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+  .download-alert-content {
+    margin: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .download-alert-header {
+    padding: 15px 15px 8px;
+  }
+
+  .download-alert-body {
+    padding: 0 15px 15px;
+  }
+
+  .download-alert-footer {
+    padding: 0 15px 15px;
+  }
+
+  .download-alert-title {
+    font-size: 1.1rem;
+  }
+}
