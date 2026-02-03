@@ -246,7 +246,7 @@ class OmsetController extends Controller {
                 <th style="width: 3%;">No</th>
                 <th style="width: 8%;">Kode Sales</th>
                 <th style="width: 12%;">Nama Sales</th>
-                <th style="width: 8%;">Jml OPu</th>
+                <th style="width: 8%;">Jml Outlet</th>
                 <th style="width: 10%;">Penjualan</th>
                 <th style="width: 10%;">Retur</th>
                 <th style="width: 10%;">Penjualan Bersih</th>

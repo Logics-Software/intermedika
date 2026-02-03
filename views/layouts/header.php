@@ -174,7 +174,8 @@ if (Auth::check() && $currentUser && !$isMapPage): ?><header class="app-header">
                                 <a href="/laporan/daftar-stok" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/daftar-stok') !== false ? 'active' : '' ?>">Daftar Stok</a>
                                 <a href="/laporan/daftar-tagihan" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/daftar-tagihan') !== false ? 'active' : '' ?>">Daftar Tagihan</a>
                                 <a href="/penjualan" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/daftar-harga') !== false ? 'active' : '' ?>">Daftar Faktur Penjualan</a>
-                                <a href="/laporan/omset" class="nav-dropdown-item">Omset Penjualan</a>
+                                <a href="/laporan/omset" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/omset') !== false && strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/omset-harian') === false ? 'active' : '' ?>">Omset Penjualan</a>
+                                <a href="/laporan/omset-harian" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/omset-harian') !== false ? 'active' : '' ?>">Omset Harian</a>
                                 <a href="/laporan/distribusi-penjualan" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/distribusi-penjualan') !== false ? 'active' : '' ?>">Distribusi Penjualan</a>
                                 <a href="/laporan/barang-tidak-terjual" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/barang-tidak-terjual') !== false ? 'active' : '' ?>">Barang Tidak Terjual</a>
                                 <a href="/laporan/customer-non-aktif" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/customer-non-aktif') !== false ? 'active' : '' ?>">Customer Non Aktif</a>
@@ -274,7 +275,8 @@ if (Auth::check() && $currentUser && !$isMapPage): ?><header class="app-header">
                                 <a href="/laporan/daftar-stok" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/daftar-stok') !== false ? 'active' : '' ?>">Daftar Stok</a>
                                 <a href="/laporan/daftar-harga" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/daftar-harga') !== false ? 'active' : '' ?>">Daftar Harga Barang</a>
                                 <a href="/laporan/daftar-tagihan" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/daftar-tagihan') !== false ? 'active' : '' ?>">Daftar Tagihan</a>
-                                <a href="/laporan/omset" class="nav-dropdown-item">Omset Penjualan</a>
+                                <a href="/laporan/omset" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/omset') !== false && strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/omset-harian') === false ? 'active' : '' ?>">Omset Penjualan</a>
+                                <a href="/laporan/omset-harian" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/omset-harian') !== false ? 'active' : '' ?>">Omset Harian</a>
                                 <a href="/laporan/distribusi-penjualan" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/distribusi-penjualan') !== false ? 'active' : '' ?>">Distribusi Penjualan</a>
                                 <a href="/laporan/barang-tidak-terjual" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/barang-tidak-terjual') !== false ? 'active' : '' ?>">Barang Tidak Terjual</a>
                                 <a href="/laporan/customer-non-aktif" class="nav-dropdown-item <?= strpos($_SERVER['REQUEST_URI'] ?? '', '/laporan/customer-non-aktif') !== false ? 'active' : '' ?>">Customer Non Aktif</a>

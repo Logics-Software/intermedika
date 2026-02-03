@@ -1,13 +1,13 @@
 <?php
-class ApiOmsetController extends Controller {
-    private $omsetModel;
+class ApiOmsetHarianController extends Controller {
+    private $omsetHarianModel;
 
     public function __construct() {
         parent::__construct();
-        $this->omsetModel = new Omset();
+        $this->omsetHarianModel = new OmsetHarian();
     }
 
-    public function omset() {
+    public function index() {
         // Simple API without token authentication for VB6 bridging
         $method = $_SERVER['REQUEST_METHOD'];
         
@@ -30,19 +30,18 @@ class ApiOmsetController extends Controller {
     }
 
     private function findOmset() {
-        $tahun = $_GET['tahun'] ?? null;
-        $bulan = $_GET['bulan'] ?? null;
+        $tanggal = $_GET['tanggal'] ?? null;
         $kodesales = $_GET['kodesales'] ?? null;
 
-        if (!$tahun || !$bulan || !$kodesales) {
+        if (!$tanggal || !$kodesales) {
             $this->json([
                 'success' => false,
-                'message' => 'Parameter tahun, bulan, dan kodesales harus diisi'
+                'message' => 'Parameter tanggal dan kodesales harus diisi'
             ], 400);
             return;
         }
 
-        $omset = $this->omsetModel->findByKey($tahun, $bulan, $kodesales);
+        $omset = $this->omsetHarianModel->findByKey($tanggal, $kodesales);
         
         if ($omset) {
             $this->json([
@@ -52,7 +51,7 @@ class ApiOmsetController extends Controller {
         } else {
             $this->json([
                 'success' => false,
-                'message' => 'Data omset tidak ditemukan'
+                'message' => 'Data omset harian tidak ditemukan'
             ], 404);
         }
     }
@@ -65,7 +64,7 @@ class ApiOmsetController extends Controller {
         }
 
         // Validate required fields
-        $required = ['tahun', 'bulan', 'kodesales'];
+        $required = ['tanggal', 'kodesales'];
         foreach ($required as $field) {
             if (empty($input[$field])) {
                 $this->json([
@@ -77,9 +76,8 @@ class ApiOmsetController extends Controller {
         }
 
         // Check if record already exists
-        $existing = $this->omsetModel->findByKey(
-            $input['tahun'],
-            $input['bulan'],
+        $existing = $this->omsetHarianModel->findByKey(
+            $input['tanggal'],
             $input['kodesales']
         );
 
@@ -87,15 +85,14 @@ class ApiOmsetController extends Controller {
             // Update existing record
             $this->json([
                 'success' => false,
-                'message' => 'Data omset sudah ada. Gunakan update atau delete terlebih dahulu.'
+                'message' => 'Data omset harian sudah ada. Gunakan update atau delete terlebih dahulu.'
             ], 400);
             return;
         }
 
         // Prepare data
         $data = [
-            'tahun' => $input['tahun'],
-            'bulan' => $input['bulan'],
+            'tanggal' => $input['tanggal'],
             'kodesales' => $input['kodesales'],
             'namasales' => $input['namasales'] ?? '',
             'jumlahfaktur' => isset($input['jumlahfaktur']) ? (float)$input['jumlahfaktur'] : 0,
@@ -113,18 +110,18 @@ class ApiOmsetController extends Controller {
         ];
 
         try {
-            $id = $this->omsetModel->create($data);
-            $omset = $this->omsetModel->findByKey($data['tahun'], $data['bulan'], $data['kodesales']);
+            $id = $this->omsetHarianModel->create($data);
+            $omset = $this->omsetHarianModel->findByKey($data['tanggal'], $data['kodesales']);
             
             $this->json([
                 'success' => true,
-                'message' => 'Data omset berhasil ditambahkan',
+                'message' => 'Data omset harian berhasil ditambahkan',
                 'data' => $omset
             ], 201);
         } catch (Exception $e) {
             $this->json([
                 'success' => false,
-                'message' => 'Gagal menambahkan data omset: ' . $e->getMessage()
+                'message' => 'Gagal menambahkan data omset harian: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -137,7 +134,7 @@ class ApiOmsetController extends Controller {
         }
 
         // Validate key fields
-        $required = ['tahun', 'bulan', 'kodesales'];
+        $required = ['tanggal', 'kodesales'];
         foreach ($required as $field) {
             if (empty($input[$field])) {
                 $this->json([
@@ -149,16 +146,15 @@ class ApiOmsetController extends Controller {
         }
 
         // Check if record exists
-        $existing = $this->omsetModel->findByKey(
-            $input['tahun'],
-            $input['bulan'],
+        $existing = $this->omsetHarianModel->findByKey(
+            $input['tanggal'],
             $input['kodesales']
         );
 
         if (!$existing) {
             $this->json([
                 'success' => false,
-                'message' => 'Data omset tidak ditemukan'
+                'message' => 'Data omset harian tidak ditemukan'
             ], 404);
             return;
         }
@@ -188,19 +184,19 @@ class ApiOmsetController extends Controller {
         }
 
         try {
-            $this->omsetModel->update($input['tahun'], $input['bulan'], $input['kodesales'], $updateData);
+            $this->omsetHarianModel->update($input['tanggal'], $input['kodesales'], $updateData);
             
-            $omset = $this->omsetModel->findByKey($input['tahun'], $input['bulan'], $input['kodesales']);
+            $omset = $this->omsetHarianModel->findByKey($input['tanggal'], $input['kodesales']);
             
             $this->json([
                 'success' => true,
-                'message' => 'Data omset berhasil diupdate',
+                'message' => 'Data omset harian berhasil diupdate',
                 'data' => $omset
             ]);
         } catch (Exception $e) {
             $this->json([
                 'success' => false,
-                'message' => 'Gagal update data omset: ' . $e->getMessage()
+                'message' => 'Gagal update data omset harian: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -213,44 +209,39 @@ class ApiOmsetController extends Controller {
         }
 
         // For DELETE method, also check GET parameters
-        if (empty($input['tahun'])) {
-            $input['tahun'] = $_GET['tahun'] ?? null;
-        }
-        if (empty($input['bulan'])) {
-            $input['bulan'] = $_GET['bulan'] ?? null;
+        if (empty($input['tanggal'])) {
+            $input['tanggal'] = $_GET['tanggal'] ?? null;
         }
 
-        $tahun = $input['tahun'] ?? null;
-        $bulan = $input['bulan'] ?? null;
+        $tanggal = $input['tanggal'] ?? null;
 
-        if (!$tahun || !$bulan) {
+        if (!$tanggal) {
             $this->json([
                 'success' => false,
-                'message' => 'Parameter tahun dan bulan harus diisi untuk delete'
+                'message' => 'Parameter tanggal harus diisi untuk delete'
             ], 400);
             return;
         }
 
         try {
-            $deleted = $this->omsetModel->deleteByTahunBulan($tahun, $bulan);
+            $deleted = $this->omsetHarianModel->deleteByTanggal($tanggal);
             
             if ($deleted > 0) {
                 $this->json([
                     'success' => true,
-                    'message' => "Berhasil menghapus {$deleted} record omset untuk tahun {$tahun} bulan {$bulan}"
+                    'message' => "Berhasil menghapus {$deleted} record omset harian untuk tanggal {$tanggal}"
                 ]);
             } else {
                 $this->json([
                     'success' => false,
-                    'message' => 'Data omset tidak ditemukan untuk dihapus'
+                    'message' => 'Data omset harian tidak ditemukan untuk dihapus'
                 ], 404);
             }
         } catch (Exception $e) {
             $this->json([
                 'success' => false,
-                'message' => 'Gagal menghapus data omset: ' . $e->getMessage()
+                'message' => 'Gagal menghapus data omset harian: ' . $e->getMessage()
             ], 500);
         }
     }
 }
-

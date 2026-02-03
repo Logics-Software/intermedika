@@ -273,7 +273,7 @@ $bulanNama = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                                     <tr>
                                         <th style="width: 3%;">No</th>
                                         <th style="width: 10%;" class="sticky-col">Nama Sales</th>
-                                        <th style="width: 5%;" class="text-end">Jml Faktur</th>
+                                        <th style="width: 5%;" class="text-end">Jml Outlet</th>
                                         <th style="width: 7%;" class="text-end">Penjualan</th>
                                         <th style="width: 6%;" class="text-end">Retur</th>
                                         <th style="width: 7%;" class="text-end">Penj. Bersih</th>

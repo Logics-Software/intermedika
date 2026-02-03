@@ -106,5 +106,45 @@ class Omset {
         $results = $this->db->fetchAll($sql);
         return array_column($results, 'tahun');
     }
+
+    public function update($tahun, $bulan, $kodesales, $data) {
+        $fields = [];
+        $params = [];
+
+        $allowedFields = [
+            'namasales',
+            'jumlahfaktur',
+            'penjualan',
+            'returpenjualan',
+            'penjualanbersih',
+            'targetpenjualan',
+            'prosenpenjualan',
+            'penerimaantunai',
+            'cnpenjualan',
+            'pencairangiro',
+            'penerimaanbersih',
+            'targetpenerimaan',
+            'prosenpenerimaan'
+        ];
+
+        foreach ($allowedFields as $field) {
+            if (array_key_exists($field, $data)) {
+                $fields[] = "{$field} = ?";
+                $params[] = $data[$field];
+            }
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $params[] = $tahun;
+        $params[] = $bulan;
+        $params[] = $kodesales;
+
+        $sql = "UPDATE omset SET " . implode(', ', $fields) . " WHERE tahun = ? AND bulan = ? AND kodesales = ?";
+        
+        return $this->db->query($sql, $params);
+    }
 }
 
