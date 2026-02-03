@@ -160,6 +160,14 @@ require __DIR__ . '/../layouts/header.php';
                                 <?php endforeach; ?>
                                 <?php endif; ?>
                             </tbody>
+                            <tfoot>
+                                <tr class="table-warning fw-bold">
+                                    <td colspan="5" class="text-end">TOTAL</td>
+                                    <td class="text-end"><?= number_format($totals['nilaipenjualan'] ?? 0, 0, ',', '.') ?></td>
+                                    <td class="text-end"><?= number_format($totals['saldopenjualan'] ?? 0, 0, ',', '.') ?></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
 

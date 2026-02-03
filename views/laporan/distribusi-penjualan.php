@@ -6,6 +6,22 @@ if (empty($baseUrl) || $baseUrl === 'http://' || $baseUrl === 'https://') {
     $baseUrl = '/';
 }
 
+// Load Choices.js for searchable dropdown
+$additionalStyles = [
+    $baseUrl . '/assets/css/choices.min.css'
+];
+$additionalScripts = [
+    $baseUrl . '/assets/js/choices.min.js'
+];
+
+// Add inline style to fix Choices.js dropdown being clipped
+echo '<style>
+    .card { overflow: visible !important; }
+    .search-filter-card { overflow: visible !important; }
+    .card-body { overflow: visible !important; }
+    .choices__list--dropdown { z-index: 10000 !important; }
+</style>';
+
 require __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -84,7 +100,7 @@ require __DIR__ . '/../layouts/header.php';
                                 <?php endif; ?>
                             </div>
                             <div class="col-6 col-md-3">
-                                <select name="kodecustomer" class="form-select" onchange="this.form.submit()">
+                                <select name="kodecustomer" id="kodecustomerSelect" class="form-select">
                                     <option value="">Semua Customer</option>
                                     <?php foreach ($customerList as $cust): ?>
                                     <option value="<?= htmlspecialchars($cust['kodecustomer']) ?>" <?= $kodecustomer === $cust['kodecustomer'] ? 'selected' : '' ?>>
@@ -137,6 +153,21 @@ require __DIR__ . '/../layouts/header.php';
                             if (form) form.submit();
                         }
                     }
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Initialize Choices.js for customer dropdown
+                        const customerSelect = document.getElementById('kodecustomerSelect');
+                        if (customerSelect && typeof Choices !== 'undefined') {
+                            new Choices(customerSelect, {
+                                searchEnabled: true,
+                                searchResultLimit: 100,
+                                searchPlaceholderValue: 'Ketik untuk mencari customer...',
+                                shouldSort: false,
+                                itemSelectText: '',
+                                noResultsText: 'Customer tidak ditemukan'
+                            });
+                        }
+                    });
                     </script>
 
                     <div class="table-responsive">

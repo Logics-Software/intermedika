@@ -48,6 +48,7 @@ class PenjualanController extends Controller {
 		$total = $this->headerModel->count($options);
 		$totalPages = $perPage > 0 ? (int)ceil($total / $perPage) : 1;
 
+		$totals = $this->headerModel->getTotals($options);
 		$data = [
 			'penjualan' => $penjualan,
 			'page' => $page,
@@ -55,6 +56,7 @@ class PenjualanController extends Controller {
 			'perPageOptions' => $perPageOptions,
 			'totalPages' => $totalPages,
 			'total' => $total,
+			'totals' => $totals,
 			'search' => $search,
 			'periode' => $periode,
 			'startDate' => $startDate,

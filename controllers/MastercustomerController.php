@@ -16,9 +16,15 @@ class MastercustomerController extends Controller {
             $perPage = 10;
         }
         
+        $kodesales = null;
+        if (Auth::isSales()) {
+            $user = Auth::user();
+            $kodesales = $user['kodesales'] ?? null;
+        }
+
         $mastercustomerModel = new Mastercustomer();
-        $customers = $mastercustomerModel->getAll($page, $perPage, $search, $sortBy, $sortOrder, $status, $statuspkp);
-        $total = $mastercustomerModel->count($search, $status, $statuspkp);
+        $customers = $mastercustomerModel->getAll($page, $perPage, $search, $sortBy, $sortOrder, $status, $statuspkp, $kodesales);
+        $total = $mastercustomerModel->count($search, $status, $statuspkp, $kodesales);
         $totalPages = $perPage > 0 ? (int)ceil($total / $perPage) : 1;
         
         $data = [

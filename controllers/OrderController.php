@@ -5,6 +5,7 @@ class OrderController extends Controller {
 	private $customerModel;
 	private $barangModel;
 	private $orderFileModel;
+	private $salesModel;
 
 	public function __construct() {
 		parent::__construct();
@@ -13,6 +14,7 @@ class OrderController extends Controller {
 		$this->customerModel = new Mastercustomer();
 		$this->barangModel = new Masterbarang();
 		$this->orderFileModel = new OrderFile();
+		$this->salesModel = new Mastersales();
 	}
 
 	public function index() {
@@ -27,6 +29,7 @@ class OrderController extends Controller {
 		$dateFilter = $_GET['periode'] ?? ($_GET['date_filter'] ?? 'today');
 		$startDate = $_GET['start_date'] ?? '';
 		$endDate = $_GET['end_date'] ?? '';
+		$kodesalesFilter = $_GET['kodesales'] ?? '';
 
 		[$computedStartDate, $computedEndDate] = $this->computeDateRange($dateFilter, $startDate, $endDate);
 
@@ -44,7 +47,16 @@ class OrderController extends Controller {
 			'sort_order' => $sortOrder
 		];
 
-		if (($user['role'] ?? '') === 'sales') {
+		// Prepare sales list for filter (only for non-sales users)
+		$salesList = [];
+		if (($user['role'] ?? '') !== 'sales') {
+			$salesList = $this->salesModel->getAllActive();
+			// Use selected filter if set
+			if (!empty($kodesalesFilter)) {
+				$options['kodesales'] = $kodesalesFilter;
+			}
+		} else {
+			// Force filter for sales user
 			$options['kodesales'] = $user['kodesales'] ?? null;
 		}
 
@@ -66,7 +78,9 @@ class OrderController extends Controller {
 			'rawStartDate' => $startDate,
 			'rawEndDate' => $endDate,
 			'sortBy' => $sortBy,
-			'sortOrder' => $sortOrder
+			'sortOrder' => $sortOrder,
+			'salesList' => $salesList,
+			'kodesalesFilter' => $kodesalesFilter
 		];
 
 		$this->view('orders/index', $data);

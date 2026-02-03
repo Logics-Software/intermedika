@@ -303,7 +303,8 @@ class Headerpenjualan {
 		return [$start, $end];
 	}
 
-	public function sumTotal($options = []) {
+	public function getTotals($options = []) {
+		$search = trim($options['search'] ?? '');
 		$kodesales = $options['kodesales'] ?? null;
 		$periode = $options['periode'] ?? 'today';
 		$startDate = $options['start_date'] ?? null;
@@ -321,6 +322,14 @@ class Headerpenjualan {
 			$params[] = $filterEnd;
 		}
 
+		if (!empty($search)) {
+			$where[] = "(hp.nopenjualan LIKE ? OR mc.namacustomer LIKE ? OR u.namasales LIKE ?)";
+			$keyword = '%' . $search . '%';
+			$params[] = $keyword;
+			$params[] = $keyword;
+			$params[] = $keyword;
+		}
+
 		if (!empty($kodesales)) {
 			$where[] = "hp.kodesales = ?";
 			$params[] = $kodesales;
@@ -333,12 +342,19 @@ class Headerpenjualan {
 
 		$whereClause = implode(' AND ', $where);
 
-		$sql = "SELECT COALESCE(SUM(hp.nilaipenjualan), 0) AS total
+		$sql = "SELECT 
+					COALESCE(SUM(hp.nilaipenjualan), 0) AS total_penjualan,
+					COALESCE(SUM(hp.saldopenjualan), 0) AS total_saldo
 				FROM headerpenjualan hp
+				LEFT JOIN mastercustomer mc ON hp.kodecustomer = mc.kodecustomer
+				LEFT JOIN mastersales u ON hp.kodesales = u.kodesales
 				WHERE {$whereClause}";
 
 		$result = $this->db->fetchOne($sql, $params);
-		return (float)($result['total'] ?? 0);
+		return [
+			'nilaipenjualan' => (float)($result['total_penjualan'] ?? 0),
+			'saldopenjualan' => (float)($result['total_saldo'] ?? 0)
+		];
 	}
 }
 

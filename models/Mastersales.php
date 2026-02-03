@@ -99,7 +99,7 @@ class Mastersales {
     }
     
     public function getAllActive() {
-        $sql = "SELECT * FROM mastersales WHERE status = 'aktif' ORDER BY kodesales ASC";
+        $sql = "SELECT * FROM mastersales WHERE status = 'aktif' ORDER BY namasales ASC";
         return $this->db->fetchAll($sql, []);
     }
 }

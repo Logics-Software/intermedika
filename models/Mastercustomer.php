@@ -16,22 +16,30 @@ class Mastercustomer {
         return $this->db->fetchOne($sql, [$kodecustomer]);
     }
 
-    public function getAll($page = 1, $perPage = 100, $search = '', $sortBy = 'id', $sortOrder = 'ASC', $status = '', $statuspkp = '') {
+    public function getAll($page = 1, $perPage = 100, $search = '', $sortBy = 'id', $sortOrder = 'ASC', $status = '', $statuspkp = '', $kodesales = null) {
         $offset = ($page - 1) * $perPage;
 
         $where = "1=1";
         $params = [];
+        $join = "";
+
+        // Filter by Sales if provided (only customers who have transaction with this sales)
+        if (!empty($kodesales)) {
+            $join = "JOIN headerpenjualan hp ON mastercustomer.kodecustomer = hp.kodecustomer";
+            $where .= " AND hp.kodesales = ?";
+            $params[] = $kodesales;
+        }
 
         if (!empty($search)) {
-            $where .= " AND (namacustomer LIKE ? OR alamatcustomer LIKE ? OR kotacustomer LIKE ? OR namawp LIKE ?)";
+            $where .= " AND (mastercustomer.namacustomer LIKE ? OR mastercustomer.alamatcustomer LIKE ? OR mastercustomer.kotacustomer LIKE ? OR mastercustomer.namawp LIKE ?)";
             $searchParam = "%{$search}%";
-            $params = array_fill(0, 4, $searchParam);
+            $params = array_merge($params, array_fill(0, 4, $searchParam));
         }
 
         if (!empty($status)) {
             $normalizedStatus = $this->normalizeStatusValue($status, null);
             if ($normalizedStatus !== null) {
-                $where .= " AND LOWER(status) = ?";
+                $where .= " AND LOWER(mastercustomer.status) = ?";
                 $params[] = $normalizedStatus;
             }
         }
@@ -39,7 +47,7 @@ class Mastercustomer {
         if (!empty($statuspkp)) {
             $normalizedStatusPkp = $this->normalizeStatusPkp($statuspkp, null);
             if ($normalizedStatusPkp !== null) {
-                $where .= " AND LOWER(statuspkp) = ?";
+                $where .= " AND LOWER(mastercustomer.statuspkp) = ?";
                 $params[] = $normalizedStatusPkp;
             }
         }
@@ -57,30 +65,43 @@ class Mastercustomer {
             'created_at',
             'updated_at'
         ];
-        $sortBy = in_array($sortBy, $validSortColumns) ? $sortBy : 'id';
+        $sortBy = in_array($sortBy, $validSortColumns) ? "mastercustomer.{$sortBy}" : 'mastercustomer.id';
         $sortOrder = strtoupper($sortOrder) === 'DESC' ? 'DESC' : 'ASC';
 
-        $sql = "SELECT * FROM mastercustomer WHERE {$where} ORDER BY {$sortBy} {$sortOrder} LIMIT ? OFFSET ?";
+        if (!empty($kodesales)) {
+             $sql = "SELECT DISTINCT mastercustomer.* FROM mastercustomer {$join} WHERE {$where} ORDER BY {$sortBy} {$sortOrder} LIMIT ? OFFSET ?";
+        } else {
+             $sql = "SELECT * FROM mastercustomer WHERE {$where} ORDER BY {$sortBy} {$sortOrder} LIMIT ? OFFSET ?";
+        }
+        
         $params[] = $perPage;
         $params[] = $offset;
 
         return $this->db->fetchAll($sql, $params);
     }
 
-    public function count($search = '', $status = '', $statuspkp = '') {
+    public function count($search = '', $status = '', $statuspkp = '', $kodesales = null) {
         $where = "1=1";
         $params = [];
+        $join = "";
+
+        // Filter by Sales if provided (only customers who have transaction with this sales)
+        if (!empty($kodesales)) {
+            $join = "JOIN headerpenjualan hp ON mastercustomer.kodecustomer = hp.kodecustomer";
+            $where .= " AND hp.kodesales = ?";
+            $params[] = $kodesales;
+        }
 
         if (!empty($search)) {
-            $where .= " AND (namacustomer LIKE ? OR alamatcustomer LIKE ? OR kotacustomer LIKE ? OR namawp LIKE ?)";
+            $where .= " AND (mastercustomer.namacustomer LIKE ? OR mastercustomer.alamatcustomer LIKE ? OR mastercustomer.kotacustomer LIKE ? OR mastercustomer.namawp LIKE ?)";
             $searchParam = "%{$search}%";
-            $params = array_fill(0, 4, $searchParam);
+            $params = array_merge($params, array_fill(0, 4, $searchParam));
         }
 
         if (!empty($status)) {
             $normalizedStatus = $this->normalizeStatusValue($status, null);
             if ($normalizedStatus !== null) {
-                $where .= " AND LOWER(status) = ?";
+                $where .= " AND LOWER(mastercustomer.status) = ?";
                 $params[] = $normalizedStatus;
             }
         }
@@ -88,12 +109,17 @@ class Mastercustomer {
         if (!empty($statuspkp)) {
             $normalizedStatusPkp = $this->normalizeStatusPkp($statuspkp, null);
             if ($normalizedStatusPkp !== null) {
-                $where .= " AND LOWER(statuspkp) = ?";
+                $where .= " AND LOWER(mastercustomer.statuspkp) = ?";
                 $params[] = $normalizedStatusPkp;
             }
         }
 
-        $sql = "SELECT COUNT(*) as total FROM mastercustomer WHERE {$where}";
+        if (!empty($kodesales)) {
+            $sql = "SELECT COUNT(DISTINCT mastercustomer.kodecustomer) as total FROM mastercustomer {$join} WHERE {$where}";
+        } else {
+            $sql = "SELECT COUNT(*) as total FROM mastercustomer WHERE {$where}";
+        }
+        
         $result = $this->db->fetchOne($sql, $params);
         return $result['total'] ?? 0;
     }

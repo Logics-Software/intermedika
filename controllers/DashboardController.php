@@ -63,7 +63,7 @@ class DashboardController extends Controller {
             'unread_messages' => $messageModel->getUnreadCount(Auth::user()['id'] ?? 0),
             // Add totals and charts for all sales
             'all_orders_total' => $headerOrder->sumTotal($options),
-            'all_penjualan_total' => $headerPenjualan->sumTotal(array_merge($options, ['periode' => 'today'])),
+            'all_penjualan_total' => $headerPenjualan->getTotals(array_merge($options, ['periode' => 'today']))['nilaipenjualan'],
             'all_penerimaan_total' => $headerPenerimaan->sumTotal($options),
             'monthly_sales' => $monthlySales,
             'monthly_inkaso' => $monthlyInkaso,
@@ -98,7 +98,7 @@ class DashboardController extends Controller {
             'unread_messages' => $messageModel->getUnreadCount(Auth::user()['id'] ?? 0),
             // Add totals for all sales (same as admin)
             'all_orders_total' => $headerOrder->sumTotal($options),
-            'all_penjualan_total' => $headerPenjualan->sumTotal(array_merge($options, ['periode' => 'today'])),
+            'all_penjualan_total' => $headerPenjualan->getTotals(array_merge($options, ['periode' => 'today']))['nilaipenjualan'],
             'all_penerimaan_total' => $headerPenerimaan->sumTotal($options),
             // Add price changes and overdue invoices
             'price_changes' => $priceChanges,
@@ -138,7 +138,7 @@ class DashboardController extends Controller {
             'my_penjualan' => $headerPenjualan->count(array_merge($options, ['periode' => 'today'])),
             'my_penerimaan' => $headerPenerimaan->count($options),
             'my_orders_total' => $headerOrder->sumTotal($options),
-            'my_penjualan_total' => $headerPenjualan->sumTotal(array_merge($options, ['periode' => 'today'])),
+            'my_penjualan_total' => $headerPenjualan->getTotals(array_merge($options, ['periode' => 'today']))['nilaipenjualan'],
             'my_penerimaan_total' => $headerPenerimaan->sumTotal($options),
             'monthly_sales' => $monthlySales,
             'monthly_inkaso' => $monthlyInkaso,
@@ -347,7 +347,7 @@ class DashboardController extends Controller {
                 FROM perubahanharga ph
                 LEFT JOIN masterbarang mb ON ph.kodebarang = mb.kodebarang
                 LEFT JOIN tabelpabrik tp ON mb.kodepabrik = tp.kodepabrik
-                ORDER BY ph.tanggalperubahan DESC
+                ORDER BY ph.tanggalperubahan DESC, ph.id DESC
                 LIMIT 10";
         
         return $db->fetchAll($sql);
@@ -379,7 +379,7 @@ class DashboardController extends Controller {
                 FROM headerpenjualan hp
                 LEFT JOIN mastercustomer mc ON hp.kodecustomer = mc.kodecustomer
                 WHERE {$whereClause}
-                ORDER BY hp.tanggaljatuhtempo DESC
+                ORDER BY umur DESC
                 LIMIT 10";
         
         // Add today as first parameter for DATEDIFF

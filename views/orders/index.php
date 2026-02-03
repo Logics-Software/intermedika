@@ -8,7 +8,7 @@ if (empty($baseUrl) || $baseUrl === 'http://' || $baseUrl === 'https://') {
 
 // Helper function to generate sort URL
 if (!function_exists('getSortUrl')) {
-    function getSortUrl($column, $currentSortBy, $currentSortOrder, $search, $status, $dateFilter, $rawStartDate, $rawEndDate, $perPage) {
+    function getSortUrl($column, $currentSortBy, $currentSortOrder, $search, $status, $dateFilter, $rawStartDate, $rawEndDate, $perPage, $kodesales = null) {
         $newSortOrder = ($currentSortBy == $column && $currentSortOrder == 'ASC') ? 'DESC' : 'ASC';
         $params = [
             'page' => 1,
@@ -17,7 +17,8 @@ if (!function_exists('getSortUrl')) {
             'status' => $status,
             'periode' => $dateFilter,
             'sort_by' => $column,
-            'sort_order' => $newSortOrder
+            'sort_order' => $newSortOrder,
+            'kodesales' => $kodesales
         ];
         if ($dateFilter === 'custom' && !empty($rawStartDate)) {
             $params['start_date'] = $rawStartDate;
@@ -58,6 +59,18 @@ require __DIR__ . '/../layouts/header.php';
 					<div class="col-12 col-lg-3">
 						<input type="text" class="form-control" name="search" placeholder="Cari customer..." value="<?= htmlspecialchars($search ?? '') ?>">
 					</div>
+                    <?php if (!empty($salesList)): ?>
+					<div class="col-6 col-lg-2">
+						<select name="kodesales" class="form-select" onchange="this.form.submit()">
+							<option value="">Semua Sales</option>
+							<?php foreach ($salesList as $s): ?>
+							<option value="<?= htmlspecialchars($s['kodesales']) ?>" <?= ($kodesalesFilter ?? '') === $s['kodesales'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($s['namasales']) ?>
+                            </option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+                    <?php endif; ?>
 					<div class="col-6 col-lg-2">
 						<select name="status" class="form-select" onchange="this.form.submit()">
 							<option value="">Semua Status</option>
@@ -108,17 +121,17 @@ require __DIR__ . '/../layouts/header.php';
 					<thead>
 						<tr>
 							<th class="th-sortable <?= ($sortBy ?? 'tanggalorder') === 'noorder' ? (($sortOrder ?? 'DESC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">
-								<a href="<?= getSortUrl('noorder', $sortBy ?? 'tanggalorder', $sortOrder ?? 'DESC', $search ?? '', $status ?? '', $dateFilter ?? 'today', $rawStartDate ?? '', $rawEndDate ?? '', $perPage ?? 10) ?>" class="text-decoration-none text-dark">
+								<a href="<?= getSortUrl('noorder', $sortBy ?? 'tanggalorder', $sortOrder ?? 'DESC', $search ?? '', $status ?? '', $dateFilter ?? 'today', $rawStartDate ?? '', $rawEndDate ?? '', $perPage ?? 10, $kodesalesFilter ?? null) ?>" class="text-decoration-none text-dark">
 									No Order
 								</a>
 							</th>
 							<th class="th-sortable <?= ($sortBy ?? 'tanggalorder') === 'tanggalorder' ? (($sortOrder ?? 'DESC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">
-								<a href="<?= getSortUrl('tanggalorder', $sortBy ?? 'tanggalorder', $sortOrder ?? 'DESC', $search ?? '', $status ?? '', $dateFilter ?? 'today', $rawStartDate ?? '', $rawEndDate ?? '', $perPage ?? 10) ?>" class="text-decoration-none text-dark">
+								<a href="<?= getSortUrl('tanggalorder', $sortBy ?? 'tanggalorder', $sortOrder ?? 'DESC', $search ?? '', $status ?? '', $dateFilter ?? 'today', $rawStartDate ?? '', $rawEndDate ?? '', $perPage ?? 10, $kodesalesFilter ?? null) ?>" class="text-decoration-none text-dark">
 									Tanggal
 								</a>
 							</th>
 							<th class="th-sortable <?= ($sortBy ?? 'tanggalorder') === 'namacustomer' ? (($sortOrder ?? 'DESC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">
-								<a href="<?= getSortUrl('namacustomer', $sortBy ?? 'tanggalorder', $sortOrder ?? 'DESC', $search ?? '', $status ?? '', $dateFilter ?? 'today', $rawStartDate ?? '', $rawEndDate ?? '', $perPage ?? 10) ?>" class="text-decoration-none text-dark">
+								<a href="<?= getSortUrl('namacustomer', $sortBy ?? 'tanggalorder', $sortOrder ?? 'DESC', $search ?? '', $status ?? '', $dateFilter ?? 'today', $rawStartDate ?? '', $rawEndDate ?? '', $perPage ?? 10, $kodesalesFilter ?? null) ?>" class="text-decoration-none text-dark">
 									Customer
 								</a>
 							</th>
@@ -126,7 +139,7 @@ require __DIR__ . '/../layouts/header.php';
 							<th class="text-end">Nilai</th>
 							<th>Status</th>
 							<th class="th-sortable <?= ($sortBy ?? 'tanggalorder') === 'nopenjualan' ? (($sortOrder ?? 'DESC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">
-								<a href="<?= getSortUrl('nopenjualan', $sortBy ?? 'tanggalorder', $sortOrder ?? 'DESC', $search ?? '', $status ?? '', $dateFilter ?? 'today', $rawStartDate ?? '', $rawEndDate ?? '', $perPage ?? 10) ?>" class="text-decoration-none text-dark">
+								<a href="<?= getSortUrl('nopenjualan', $sortBy ?? 'tanggalorder', $sortOrder ?? 'DESC', $search ?? '', $status ?? '', $dateFilter ?? 'today', $rawStartDate ?? '', $rawEndDate ?? '', $perPage ?? 10, $kodesalesFilter ?? null) ?>" class="text-decoration-none text-dark">
 									No.Faktur
 								</a>
 							</th>
@@ -174,7 +187,7 @@ require __DIR__ . '/../layouts/header.php';
 			$perPage = (int)$perPage;
 			
 			// Build link function for pagination
-			$buildLink = function ($p) use ($perPage, $search, $status, $dateFilter, $rawStartDate, $rawEndDate, $sortBy, $sortOrder) {
+			$buildLink = function ($p) use ($perPage, $search, $status, $dateFilter, $rawStartDate, $rawEndDate, $sortBy, $sortOrder, $kodesalesFilter) {
 				$params = [
 					'page' => $p,
 					'per_page' => $perPage,
@@ -182,7 +195,8 @@ require __DIR__ . '/../layouts/header.php';
 					'status' => $status,
 					'periode' => $dateFilter,
 					'sort_by' => $sortBy,
-					'sort_order' => $sortOrder
+					'sort_order' => $sortOrder,
+					'kodesales' => $kodesalesFilter
 				];
 				if ($dateFilter === 'custom' && !empty($rawStartDate)) {
 					$params['start_date'] = $rawStartDate;

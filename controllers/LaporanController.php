@@ -911,10 +911,17 @@ class LaporanController extends Controller {
         $sortOrder = $_GET['sort_order'] ?? 'DESC';
         $export = $_GET['export'] ?? ''; // 'excel' or 'pdf'
 
+        // Check if user is sales
+        $kodesales = null;
+        if (Auth::isSales()) {
+            $user = Auth::user();
+            $kodesales = $user['kodesales'] ?? null;
+        }
+
         // Get all data for export, or paginated for display
         if (!empty($export)) {
             // For export, get all data
-            $tagihans = $this->getAllTagihansForReport($search, $kodecustomer, $statusJatuhTempo, $sortBy, $sortOrder);
+            $tagihans = $this->getAllTagihansForReport($search, $kodecustomer, $statusJatuhTempo, $sortBy, $sortOrder, $kodesales);
             
             if ($export === 'excel') {
                 $this->exportExcelTagihan($tagihans);
@@ -930,8 +937,8 @@ class LaporanController extends Controller {
         $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
         $perPage = in_array($perPage, $perPageOptions, true) ? $perPage : 10;
 
-        $tagihans = $this->getTagihansForReport($search, $kodecustomer, $statusJatuhTempo, $sortBy, $sortOrder, $page, $perPage);
-        $total = $this->countTagihansForReport($search, $kodecustomer, $statusJatuhTempo);
+        $tagihans = $this->getTagihansForReport($search, $kodecustomer, $statusJatuhTempo, $sortBy, $sortOrder, $page, $perPage, $kodesales);
+        $total = $this->countTagihansForReport($search, $kodecustomer, $statusJatuhTempo, $kodesales);
         $totalPages = $perPage > 0 ? (int)ceil($total / $perPage) : 1;
 
         // Calculate totals for current page
@@ -945,11 +952,12 @@ class LaporanController extends Controller {
         }
 
         // Calculate grand total from all data (not paginated)
-        $grandTotals = $this->getGrandTotalsForReport($search, $kodecustomer, $statusJatuhTempo);
+        $grandTotals = $this->getGrandTotalsForReport($search, $kodecustomer, $statusJatuhTempo, $kodesales);
 
         // Get customers for dropdown
         $customerModel = new Mastercustomer();
-        $customers = $customerModel->getAllForSelection();
+        // $customers = $customerModel->getAllForSelection();
+        $customers = $this->getCustomersForTagihanDropdown($statusJatuhTempo, $kodesales);
 
         $data = [
             'tagihans' => $tagihans,
@@ -970,7 +978,7 @@ class LaporanController extends Controller {
         $this->view('laporan/daftar-tagihan', $data);
     }
 
-    private function getTagihansForReport($search = '', $kodecustomer = '', $statusJatuhTempo = 'semua', $sortBy = 'tanggalpenjualan', $sortOrder = 'DESC', $page = 1, $perPage = 10) {
+    private function getTagihansForReport($search = '', $kodecustomer = '', $statusJatuhTempo = 'semua', $sortBy = 'tanggalpenjualan', $sortOrder = 'DESC', $page = 1, $perPage = 10, $kodesales = null) {
         $offset = ($page - 1) * $perPage;
         $tanggalSistem = date('Y-m-d');
         
@@ -995,6 +1003,11 @@ class LaporanController extends Controller {
         } elseif ($statusJatuhTempo === 'belum') {
             $where[] = "(hp.tanggaljatuhtempo >= ? OR hp.tanggaljatuhtempo IS NULL)";
             $params[] = $tanggalSistem;
+        }
+
+        if (!empty($kodesales)) {
+            $where[] = "hp.kodesales = ?";
+            $params[] = $kodesales;
         }
 
         // Validate sort column
@@ -1035,7 +1048,7 @@ class LaporanController extends Controller {
         return $this->db->fetchAll($sql, $params);
     }
 
-    private function countTagihansForReport($search = '', $kodecustomer = '', $statusJatuhTempo = 'semua') {
+    private function countTagihansForReport($search = '', $kodecustomer = '', $statusJatuhTempo = 'semua', $kodesales = null) {
         $tanggalSistem = date('Y-m-d');
         
         $where = ["hp.saldopenjualan > 0"];
@@ -1059,6 +1072,11 @@ class LaporanController extends Controller {
         } elseif ($statusJatuhTempo === 'belum') {
             $where[] = "(hp.tanggaljatuhtempo >= ? OR hp.tanggaljatuhtempo IS NULL)";
             $params[] = $tanggalSistem;
+        }
+
+        if (!empty($kodesales)) {
+            $where[] = "hp.kodesales = ?";
+            $params[] = $kodesales;
         }
 
         $whereClause = implode(' AND ', $where);
@@ -1072,7 +1090,7 @@ class LaporanController extends Controller {
         return $result ? (int)$result['total'] : 0;
     }
 
-    private function getGrandTotalsForReport($search = '', $kodecustomer = '', $statusJatuhTempo = 'semua') {
+    private function getGrandTotalsForReport($search = '', $kodecustomer = '', $statusJatuhTempo = 'semua', $kodesales = null) {
         $tanggalSistem = date('Y-m-d');
         
         $where = ["hp.saldopenjualan > 0"];
@@ -1096,6 +1114,11 @@ class LaporanController extends Controller {
         } elseif ($statusJatuhTempo === 'belum') {
             $where[] = "(hp.tanggaljatuhtempo >= ? OR hp.tanggaljatuhtempo IS NULL)";
             $params[] = $tanggalSistem;
+        }
+
+        if (!empty($kodesales)) {
+            $where[] = "hp.kodesales = ?";
+            $params[] = $kodesales;
         }
 
         $whereClause = implode(' AND ', $where);
@@ -1114,7 +1137,7 @@ class LaporanController extends Controller {
         ];
     }
 
-    private function getAllTagihansForReport($search = '', $kodecustomer = '', $statusJatuhTempo = 'semua', $sortBy = 'umur', $sortOrder = 'DESC') {
+    private function getAllTagihansForReport($search = '', $kodecustomer = '', $statusJatuhTempo = 'semua', $sortBy = 'umur', $sortOrder = 'DESC', $kodesales = null) {
         $tanggalSistem = date('Y-m-d');
         
         $where = ["hp.saldopenjualan > 0"];
@@ -1138,6 +1161,11 @@ class LaporanController extends Controller {
         } elseif ($statusJatuhTempo === 'belum') {
             $where[] = "(hp.tanggaljatuhtempo >= ? OR hp.tanggaljatuhtempo IS NULL)";
             $params[] = $tanggalSistem;
+        }
+
+        if (!empty($kodesales)) {
+            $where[] = "hp.kodesales = ?";
+            $params[] = $kodesales;
         }
 
         // Validate sort column
@@ -1341,10 +1369,75 @@ class LaporanController extends Controller {
             'startDate' => $startDate,
             'endDate' => $endDate,
             'salesList' => $this->salesModel->getAllActive(),
-            'customerList' => $this->customerModel->getAllActive()
+            'customerList' => $this->getCustomersForDropdown($filters)
         ];
 
         $this->view('laporan/distribusi-penjualan', $viewData);
+    }
+
+    private function getCustomersForDropdown($filters) {
+        $params = [];
+        $where = ["1=1"];
+
+        // Filter by Sales if provided
+        if (!empty($filters['kodesales'])) {
+            $where[] = "hp.kodesales = ?";
+            $params[] = $filters['kodesales'];
+        }
+
+        // Filter by Date
+        if ($filters['periode'] === 'today') {
+            $where[] = "DATE(hp.tanggalpenjualan) = CURDATE()";
+        } elseif ($filters['periode'] === 'this_month') {
+            $where[] = "MONTH(hp.tanggalpenjualan) = MONTH(CURDATE()) AND YEAR(hp.tanggalpenjualan) = YEAR(CURDATE())";
+        } elseif ($filters['periode'] === 'this_year') {
+            $where[] = "YEAR(hp.tanggalpenjualan) = YEAR(CURDATE())";
+        } elseif ($filters['periode'] === 'custom' && !empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $where[] = "DATE(hp.tanggalpenjualan) BETWEEN ? AND ?";
+            $params[] = $filters['start_date'];
+            $params[] = $filters['end_date'];
+        }
+
+        $whereClause = implode(' AND ', $where);
+
+        $sql = "SELECT DISTINCT mc.kodecustomer, mc.namacustomer, mc.namabadanusaha
+                FROM headerpenjualan hp
+                JOIN mastercustomer mc ON hp.kodecustomer = mc.kodecustomer
+                WHERE {$whereClause}
+                ORDER BY mc.namacustomer ASC";
+
+        return $this->db->fetchAll($sql, $params);
+    }
+
+    private function getCustomersForTagihanDropdown($statusJatuhTempo, $kodesales) {
+        $params = [];
+        $where = ["hp.saldopenjualan > 0"];
+
+        // Filter by Sales if provided
+        if (!empty($kodesales)) {
+            $where[] = "hp.kodesales = ?";
+            $params[] = $kodesales;
+        }
+
+        // Filter by Jatuh Tempo Status
+        $tanggalSistem = date('Y-m-d');
+        if ($statusJatuhTempo === 'sudah') {
+            $where[] = "hp.tanggaljatuhtempo < ?";
+            $params[] = $tanggalSistem;
+        } elseif ($statusJatuhTempo === 'belum') {
+            $where[] = "hp.tanggaljatuhtempo >= ?";
+            $params[] = $tanggalSistem;
+        }
+
+        $whereClause = implode(' AND ', $where);
+
+        $sql = "SELECT DISTINCT mc.kodecustomer, mc.namacustomer, mc.namabadanusaha, mc.alamatcustomer, mc.statuspkp
+                FROM headerpenjualan hp
+                JOIN mastercustomer mc ON hp.kodecustomer = mc.kodecustomer
+                WHERE {$whereClause}
+                ORDER BY mc.namacustomer ASC";
+
+        return $this->db->fetchAll($sql, $params);
     }
 
     private function getDistribusiPenjualanData($filters) {
