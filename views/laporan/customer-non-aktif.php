@@ -78,14 +78,19 @@ if (!function_exists('getSortIconCustomerNonAktif')) {
                             </div>
                             
                             <div class="col-6 col-md-2">
-                                <select name="kodesales" class="form-select">
+                                <select name="kodesales" class="form-select" <?= (isset($isSales) && $isSales) ? 'disabled' : '' ?>>
+                                    <?php if (!isset($isSales) || !$isSales): ?>
                                     <option value="">Semua Sales</option>
+                                    <?php endif; ?>
                                     <?php foreach ($salesList as $sales): ?>
                                     <option value="<?= htmlspecialchars($sales['kodesales']) ?>" <?= $kodesales == $sales['kodesales'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($sales['namasales']) ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <?php if (isset($isSales) && $isSales): ?>
+                                <input type="hidden" name="kodesales" value="<?= htmlspecialchars($kodesales) ?>">
+                                <?php endif; ?>
                             </div>
 
                             <div class="col-6 col-md-2">

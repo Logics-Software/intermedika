@@ -275,6 +275,7 @@ $router->delete('/api/perubahanharga', 'ApiPerubahanhargaController', 'index');
 // Laporan routes
 $router->get('/laporan/daftar-barang', 'LaporanController', 'daftarBarang');
 $router->get('/laporan/daftar-stok', 'LaporanController', 'daftarStok');
+$router->get('/laporan/persediaan', 'LaporanController', 'laporanPersediaan');
 $router->get('/laporan/daftar-harga', 'LaporanController', 'daftarHarga');
 $router->get('/laporan/daftar-tagihan', 'LaporanController', 'daftarTagihan');
 $router->get('/laporan/distribusi-penjualan', 'LaporanController', 'distribusiPenjualan');

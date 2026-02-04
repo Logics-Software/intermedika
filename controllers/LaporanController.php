@@ -611,6 +611,310 @@ class LaporanController extends Controller {
         $pdf->Output('D', $filename);
     }
 
+    public function laporanPersediaan() {
+        Auth::requireRole(['admin', 'manajemen', 'operator']);
+
+        $search = trim($_GET['search'] ?? '');
+        $kodepabrik = trim($_GET['kodepabrik'] ?? '');
+        $kodegolongan = trim($_GET['kodegolongan'] ?? '');
+        $kondisiStok = $_GET['kondisi_stok'] ?? 'semua'; // 'semua', 'ada', 'kosong'
+        $sortBy = $_GET['sort_by'] ?? 'namabarang';
+        $sortOrder = $_GET['sort_order'] ?? 'ASC';
+        $export = $_GET['export'] ?? ''; // 'excel' or 'pdf'
+
+        // Get all data for export, or paginated for display
+        if (!empty($export)) {
+            // For export, get all data
+            $barangs = $this->getAllPersediaanForReport($search, $kodepabrik, $kodegolongan, $kondisiStok, $sortBy, $sortOrder);
+            
+            if ($export === 'excel') {
+                $this->exportExcelPersediaan($barangs);
+            } elseif ($export === 'pdf') {
+                $this->exportPDFPersediaan($barangs);
+            }
+            exit;
+        }
+
+        // For display, use pagination
+        $page = isset($_GET['page']) ? max((int)$_GET['page'], 1) : 1;
+        $perPageOptions = [10, 25, 50, 100, 200, 500, 1000];
+        $perPage = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+        $perPage = in_array($perPage, $perPageOptions, true) ? $perPage : 10;
+
+        $barangs = $this->getPersediaanForReport($search, $kodepabrik, $kodegolongan, $kondisiStok, $sortBy, $sortOrder, $page, $perPage);
+        $total = $this->countPersediaanForReport($search, $kodepabrik, $kodegolongan, $kondisiStok);
+        $totalPages = $perPage > 0 ? (int)ceil($total / $perPage) : 1;
+
+        // Get pabrik and golongan for dropdown
+        $pabriks = $this->pabrikModel->getAllActive();
+        $golongans = $this->golonganModel->getAllActive();
+
+        $data = [
+            'barangs' => $barangs,
+            'page' => $page,
+            'perPage' => $perPage,
+            'total' => $total,
+            'totalPages' => $totalPages,
+            'search' => $search,
+            'kodepabrik' => $kodepabrik,
+            'kodegolongan' => $kodegolongan,
+            'kondisiStok' => $kondisiStok,
+            'sortBy' => $sortBy,
+            'sortOrder' => $sortOrder,
+            'pabriks' => $pabriks,
+            'golongans' => $golongans,
+        ];
+
+        $this->view('laporan/persediaan', $data);
+    }
+
+    private function getPersediaanForReport($search = '', $kodepabrik = '', $kodegolongan = '', $kondisiStok = 'semua', $sortBy = 'namabarang', $sortOrder = 'ASC', $page = 1, $perPage = 10) {
+        $offset = ($page - 1) * $perPage;
+        
+        $where = ["1=1"];
+        $params = [];
+
+        if (!empty($search)) {
+            $where[] = "(mb.namabarang LIKE ? OR mb.kandungan LIKE ?)";
+            $searchParam = "%{$search}%";
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+        }
+
+        if (!empty($kodepabrik)) {
+            $where[] = "mb.kodepabrik = ?";
+            $params[] = $kodepabrik;
+        }
+
+        if (!empty($kodegolongan)) {
+            $where[] = "mb.kodegolongan = ?";
+            $params[] = $kodegolongan;
+        }
+
+        if ($kondisiStok === 'ada') {
+            $where[] = "mb.stokakhir > 0";
+        } elseif ($kondisiStok === 'kosong') {
+            $where[] = "(mb.stokakhir = 0 OR mb.stokakhir IS NULL)";
+        }
+
+        // Validate sort column
+        $validSortColumns = ['namabarang', 'satuan', 'hargajual', 'discountjual', 'kondisi', 'stok', 'hpp', 'nilai_persediaan'];
+        $sortBy = in_array($sortBy, $validSortColumns) ? $sortBy : 'namabarang';
+        $sortOrder = strtoupper($sortOrder) === 'DESC' ? 'DESC' : 'ASC';
+
+        // Map sort column to actual database column
+        $sortColumnMap = [
+            'namabarang' => 'mb.namabarang',
+            'satuan' => 'mb.satuan',
+            'hargajual' => 'mb.hargajual',
+            'discountjual' => 'mb.discountjual',
+            'kondisi' => 'mb.kondisi',
+            'stok' => 'mb.stokakhir',
+            'hpp' => 'mb.hpp',
+            'nilai_persediaan' => '(mb.stokakhir * mb.hpp)'
+        ];
+        $orderByColumn = $sortColumnMap[$sortBy] ?? 'mb.namabarang';
+
+        $whereClause = implode(' AND ', $where);
+
+        $sql = "SELECT 
+                    mb.namabarang,
+                    mb.satuan,
+                    mb.hargajual,
+                    mb.discountjual,
+                    mb.kondisi,
+                    mb.stokakhir AS stok,
+                    mb.hpp,
+                    (mb.stokakhir * mb.hpp) as nilai_persediaan
+                FROM masterbarang mb
+                LEFT JOIN tabelpabrik tp ON mb.kodepabrik = tp.kodepabrik
+                LEFT JOIN tabelgolongan tg ON mb.kodegolongan = tg.kodegolongan
+                WHERE {$whereClause}
+                ORDER BY {$orderByColumn} {$sortOrder}
+                LIMIT ? OFFSET ?";
+        
+        $params[] = $perPage;
+        $params[] = $offset;
+
+        return $this->db->fetchAll($sql, $params);
+    }
+
+    private function getAllPersediaanForReport($search = '', $kodepabrik = '', $kodegolongan = '', $kondisiStok = 'semua', $sortBy = 'namabarang', $sortOrder = 'ASC') {
+        $where = ["1=1"];
+        $params = [];
+
+        if (!empty($search)) {
+            $where[] = "(mb.namabarang LIKE ? OR mb.kandungan LIKE ?)";
+            $searchParam = "%{$search}%";
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+        }
+
+        if (!empty($kodepabrik)) {
+            $where[] = "mb.kodepabrik = ?";
+            $params[] = $kodepabrik;
+        }
+
+        if (!empty($kodegolongan)) {
+            $where[] = "mb.kodegolongan = ?";
+            $params[] = $kodegolongan;
+        }
+
+        if ($kondisiStok === 'ada') {
+            $where[] = "mb.stokakhir > 0";
+        } elseif ($kondisiStok === 'kosong') {
+            $where[] = "(mb.stokakhir = 0 OR mb.stokakhir IS NULL)";
+        }
+
+        // Validate sort column
+        $validSortColumns = ['namabarang', 'satuan', 'hargajual', 'discountjual', 'kondisi', 'stok', 'hpp', 'nilai_persediaan'];
+        $sortBy = in_array($sortBy, $validSortColumns) ? $sortBy : 'namabarang';
+        $sortOrder = strtoupper($sortOrder) === 'DESC' ? 'DESC' : 'ASC';
+
+        // Map sort column to actual database column
+        $sortColumnMap = [
+            'namabarang' => 'mb.namabarang',
+            'satuan' => 'mb.satuan',
+            'hargajual' => 'mb.hargajual',
+            'discountjual' => 'mb.discountjual',
+            'kondisi' => 'mb.kondisi',
+            'stok' => 'mb.stokakhir',
+            'hpp' => 'mb.hpp',
+            'nilai_persediaan' => '(mb.stokakhir * mb.hpp)'
+        ];
+        $orderByColumn = $sortColumnMap[$sortBy] ?? 'mb.namabarang';
+
+        $whereClause = implode(' AND ', $where);
+
+        $sql = "SELECT 
+                    mb.namabarang,
+                    mb.satuan,
+                    mb.hargajual,
+                    mb.discountjual,
+                    mb.kondisi,
+                    mb.stokakhir AS stok,
+                    mb.hpp,
+                    (mb.stokakhir * mb.hpp) as nilai_persediaan
+                FROM masterbarang mb
+                LEFT JOIN tabelpabrik tp ON mb.kodepabrik = tp.kodepabrik
+                LEFT JOIN tabelgolongan tg ON mb.kodegolongan = tg.kodegolongan
+                WHERE {$whereClause}
+                ORDER BY {$orderByColumn} {$sortOrder}";
+
+        return $this->db->fetchAll($sql, $params);
+    }
+
+    private function countPersediaanForReport($search = '', $kodepabrik = '', $kodegolongan = '', $kondisiStok = 'semua') {
+        $where = ["1=1"];
+        $params = [];
+
+        if (!empty($search)) {
+            $where[] = "(mb.namabarang LIKE ? OR mb.kandungan LIKE ?)";
+            $searchParam = "%{$search}%";
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+        }
+
+        if (!empty($kodepabrik)) {
+            $where[] = "mb.kodepabrik = ?";
+            $params[] = $kodepabrik;
+        }
+
+        if (!empty($kodegolongan)) {
+            $where[] = "mb.kodegolongan = ?";
+            $params[] = $kodegolongan;
+        }
+
+        if ($kondisiStok === 'ada') {
+            $where[] = "mb.stokakhir > 0";
+        } elseif ($kondisiStok === 'kosong') {
+            $where[] = "(mb.stokakhir = 0 OR mb.stokakhir IS NULL)";
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "SELECT COUNT(*) as total 
+                FROM masterbarang mb 
+                WHERE {$whereClause}";
+
+        $result = $this->db->fetchOne($sql, $params);
+        return $result['total'] ?? 0;
+    }
+
+    private function exportExcelPersediaan($barangs) {
+        $filename = 'Laporan_Persediaan_' . date('YmdHis') . '.csv';
+        
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        // Add BOM for UTF-8 to ensure Excel displays correctly
+        echo "\xEF\xBB\xBF";
+
+        $output = fopen('php://output', 'w');
+
+        // Header
+        fputcsv($output, ['Nama Barang', 'Satuan', 'HPP', 'Stok', 'Nilai Persediaan'], ';');
+
+        // Data
+        foreach ($barangs as $barang) {
+            fputcsv($output, [
+                $barang['namabarang'] ?? '',
+                $barang['satuan'] ?? '',
+                $barang['hpp'] ?? '0',
+                $barang['stok'] ?? '0',
+                $barang['nilai_persediaan'] ?? '0'
+            ], ';');
+        }
+
+        fclose($output);
+    }
+
+    private function exportPDFPersediaan($barangs) {
+        $this->generateAndDownloadPDFPersediaan($barangs);
+    }
+
+    private function generateAndDownloadPDFPersediaan($data) {
+        $filename = 'Daftar_Persediaan_' . date('Y-m-d_H-i-s') . '.pdf';
+        
+        $pdf = new LaporanPDF('P', 'mm', 'A4');
+        $pdf->reportTitle = 'Daftar Persediaan';
+        $pdf->reportSubtitle = "Tanggal Laporan: " . date('d F Y') . "\nTotal Barang: " . count($data);
+        $pdf->printedBy = Auth::user()['namalengkap'] ?? 'System';
+        $pdf->AliasNbPages();
+        $pdf->AddPage();
+
+        $header = ['No', 'Nama Barang', 'Satuan', 'HPP', 'Stok', 'Nilai Persediaan'];
+        $widths = [10, 80, 20, 25, 20, 35];
+
+        $pdf->TableHeader($header, $widths);
+
+        $pdf->SetFont('Helvetica', '', 8);
+        $no = 1;
+        
+        $totalNilai = 0;
+
+        foreach ($data as $d) {
+            $pdf->Cell($widths[0], 6, $no++, 1, 0, 'C');
+            $pdf->Cell($widths[1], 6, substr($d['namabarang'] ?? '-', 0, 45), 1, 0, 'L');
+            $pdf->Cell($widths[2], 6, $d['satuan'] ?? '-', 1, 0, 'C');
+            $pdf->Cell($widths[3], 6, number_format((float)($d['hpp'] ?? 0), 0, ',', '.'), 1, 0, 'R');
+            $pdf->Cell($widths[4], 6, number_format((float)($d['stok'] ?? 0), 0, ',', '.'), 1, 0, 'R');
+            $pdf->Cell($widths[5], 6, number_format((float)($d['nilai_persediaan'] ?? 0), 0, ',', '.'), 1, 0, 'R');
+            $pdf->Ln();
+            
+            $totalNilai += (float)($d['nilai_persediaan'] ?? 0);
+        }
+        
+        // Total row
+        $pdf->SetFont('Helvetica', 'B', 8);
+        $pdf->Cell($widths[0] + $widths[1] + $widths[2] + $widths[3] + $widths[4], 6, 'Total Nilai Persediaan', 1, 0, 'R');
+        $pdf->Cell($widths[5], 6, number_format($totalNilai, 0, ',', '.'), 1, 0, 'R');
+        $pdf->Ln();
+
+        $pdf->Output('D', $filename);
+    }
+
     public function daftarHarga() {
         Auth::requireRole(['admin', 'manajemen', 'operator', 'sales']);
 
@@ -1939,10 +2243,25 @@ class LaporanController extends Controller {
             exit;
         }
 
+        // Restriction for Sales role
+        if (Auth::isSales()) {
+            $user = Auth::user();
+            $kodesales = $user['kodesales'] ?? '';
+        }
+
         $reportData = $this->getCustomerNonAktifData($search, $kodesales, $month, $year, $monthKeys, $page, $perPage);
         $total = $this->countCustomerNonAktifData($search, $kodesales, $month, $year, $monthKeys);
         $totalPages = $perPage > 0 ? (int)ceil($total / $perPage) : 1;
+        
         $salesList = $this->salesModel->getAllActive();
+        if (Auth::isSales()) {
+             // Filter salesList to only include the current sales user
+             $user = Auth::user();
+             $myKodesales = $user['kodesales'] ?? '';
+             $salesList = array_filter($salesList, function($s) use ($myKodesales) {
+                 return $s['kodesales'] === $myKodesales;
+             });
+        }
         
         $totals = $this->getTotalsCustomerNonAktif($search, $kodesales, $month, $year, $monthKeys);
 
@@ -1959,7 +2278,8 @@ class LaporanController extends Controller {
             'year' => $year,
             'salesList' => $salesList,
             'monthHeaders' => $monthHeaders,
-            'totals' => $totals
+            'totals' => $totals,
+            'isSales' => Auth::isSales()
         ];
 
         $this->view('laporan/customer-non-aktif', $data);
