@@ -116,7 +116,7 @@ require __DIR__ . '/../layouts/header.php';
                                     <div class="card-body">
                                         <div class="row g-3">
                                             <div class="col-6 col-md-3">
-                                                <div class="small text-muted">Jumlah Faktur</div>
+                                                <div class="small text-muted">Jumlah Outlet</div>
                                                 <div class="fw-bold"><?= number_format((float)($omsetData['jumlahfaktur'] ?? 0), 0, ',', '.') ?></div>
                                             </div>
                                             <div class="col-6 col-md-3">
@@ -149,7 +149,7 @@ require __DIR__ . '/../layouts/header.php';
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-header bg-white">
-                                        <h5 class="mb-0">Penerimaan</h5>
+                                        <h5 class="mb-0">Inkaso</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row g-3">
@@ -247,10 +247,10 @@ require __DIR__ . '/../layouts/header.php';
                                             <th rowspan="2" style="width: 3%;">No</th>
                                             <th rowspan="2" style="width: 15%;">Nama Sales</th>
                                             <th colspan="6">Penjualan</th>
-                                            <th colspan="6">Penerimaan</th>
+                                            <th colspan="6">Inkaso</th>
                                         </tr>
                                         <tr>
-                                            <th>Faktur</th>
+                                            <th>Outlet</th>
                                             <th>Penjualan</th>
                                             <th>Retur</th>
                                             <th>Netto</th>

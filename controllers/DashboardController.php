@@ -68,7 +68,8 @@ class DashboardController extends Controller {
             'monthly_sales' => $monthlySales,
             'monthly_inkaso' => $monthlyInkaso,
             'price_changes' => $priceChanges,
-            'overdue_invoices' => $overdueInvoices
+            'overdue_invoices' => $overdueInvoices,
+            'total_outlets_today' => $headerPenjualan->countDistinctCustomers(array_merge($options, ['periode' => 'today']))
         ];
     }
     
@@ -102,7 +103,8 @@ class DashboardController extends Controller {
             'all_penerimaan_total' => $headerPenerimaan->sumTotal($options),
             // Add price changes and overdue invoices
             'price_changes' => $priceChanges,
-            'overdue_invoices' => $overdueInvoices
+            'overdue_invoices' => $overdueInvoices,
+            'total_outlets_today' => $headerPenjualan->countDistinctCustomers(array_merge($options, ['periode' => 'today']))
         ];
     }
     

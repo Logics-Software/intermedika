@@ -98,6 +98,33 @@ require __DIR__ . '/../layouts/header.php';
             </div>
         </div>
 
+        <!-- Additional Daily Stats (Faktur & Outlet) -->
+        <div class="row g-3 mb-3">
+            <div class="col-12 col-md-6">
+                <div class="card dashboard-stats-card">
+                    <div class="card-body">
+                        <div class="dashboard-stats-card-icon icon-blue">
+                            <?= icon('file-lines', '', 24) ?>
+                        </div>
+                        <h4 class="card-title text-muted mb-2">Total Faktur Hari Ini</h4>
+                        <h3 class="mb-0"><?= number_format($stats['total_penjualan'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="card dashboard-stats-card">
+                    <div class="card-body">
+                        <div class="dashboard-stats-card-icon icon-purple">
+                            <?= icon('store', '', 24) ?>
+                        </div>
+                        <h4 class="card-title text-muted mb-2">Total Outlet Hari Ini</h4>
+                        <h3 class="mb-0"><?= number_format($stats['total_outlets_today'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Chart Penjualan dan Inkaso Per Bulan YTD (All Sales) -->
         <?php if (!empty($stats['monthly_sales']) || !empty($stats['monthly_inkaso'])): ?>
         <div class="row g-3 mb-3">
@@ -271,6 +298,32 @@ require __DIR__ . '/../layouts/header.php';
                             <p class="mb-0"><?= number_format($stats['total_penerimaan'] ?? 0) ?> Inkaso</p>
                             <a href="/penerimaan" class="btn btn-sm btn-outline-primary">Lihat Detail</a>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Daily Stats (Faktur & Outlet) -->
+        <div class="row g-3 mb-3">
+            <div class="col-12 col-md-6">
+                <div class="card dashboard-stats-card">
+                    <div class="card-body">
+                        <div class="dashboard-stats-card-icon icon-blue">
+                            <?= icon('file-lines', '', 24) ?>
+                        </div>
+                        <h4 class="card-title text-muted mb-2">Jumlah Faktur Hari Ini</h4>
+                        <h3 class="mb-0"><?= number_format($stats['total_penjualan'] ?? 0) ?></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="card dashboard-stats-card">
+                    <div class="card-body">
+                        <div class="dashboard-stats-card-icon icon-purple">
+                            <?= icon('store', '', 24) ?>
+                        </div>
+                        <h4 class="card-title text-muted mb-2">Jumlah Outlet Hari Ini</h4>
+                        <h3 class="mb-0"><?= number_format($stats['total_outlets_today'] ?? 0) ?></h3>
                     </div>
                 </div>
             </div>

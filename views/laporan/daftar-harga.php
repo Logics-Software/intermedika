@@ -150,38 +150,29 @@ require __DIR__ . '/../layouts/header.php';
                         <table class="table table-striped table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th>No</th>
-                                    <th class="th-sortable sticky-col <?= ($sortBy ?? 'namabarang') === 'namabarang' ? (($sortOrder ?? 'ASC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">
-                                    <a href="<?= getSortUrlLaporanHarga('namabarang', $sortBy ?? 'namabarang', $sortOrder ?? 'ASC', $search ?? '', $perPage ?? 10, $kodepabrik ?? '', $kodegolongan ?? '', $kondisiStok ?? 'semua') ?>" class="text-decoration-none text-dark">
-                                        Nama Barang
-                                    </a>
-                                </th>
-                                <th>
-                                    Satuan
-                                </th>
-                                <th class="th-sortable <?= ($sortBy ?? 'namabarang') === 'pabrik' ? (($sortOrder ?? 'ASC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">
-                                    <a href="<?= getSortUrlLaporanHarga('pabrik', $sortBy ?? 'namabarang', $sortOrder ?? 'ASC', $search ?? '', $perPage ?? 10, $kodepabrik ?? '', $kodegolongan ?? '', $kondisiStok ?? 'semua') ?>" class="text-decoration-none text-dark">
-                                        Pabrik
-                                    </a>
-                                </th>
-                                <th>
-                                    Kondisi
-                                </th>
-                                <th>
-                                    ED
-                                </th>
-                                    <th>
-                                        Harga Jual
+                                    <th style="width: 5%;">No</th>
+                                    <th class="th-sortable <?= ($sortBy ?? 'namabarang') === 'namabarang' ? (($sortOrder ?? 'ASC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">
+                                        <a href="<?= getSortUrlLaporanHarga('namabarang', $sortBy ?? 'namabarang', $sortOrder ?? 'ASC', $search ?? '', $perPage ?? 10, $kodepabrik ?? '', $kodegolongan ?? '', $kondisiStok ?? 'semua') ?>" class="text-decoration-none text-dark">
+                                            Nama Barang
+                                        </a>
                                     </th>
-                                    <th>
-                                        Disc
+                                    <th class="text-end" style="width: 15%;">
+                                        Stok
+                                    </th>
+                                    <th class="th-sortable text-end" style="width: 20%;">
+                                        <a href="<?= getSortUrlLaporanHarga('hargajual', $sortBy ?? 'namabarang', $sortOrder ?? 'ASC', $search ?? '', $perPage ?? 10, $kodepabrik ?? '', $kodegolongan ?? '', $kondisiStok ?? 'semua') ?>" class="text-decoration-none text-dark">
+                                            Harga
+                                        </a>
+                                    </th>
+                                    <th class="text-center" style="width: 15%;">
+                                        Satuan
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($barangs)): ?>
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted py-4">Tidak ada data barang</td>
+                                    <td colspan="5" class="text-center text-muted py-4">Tidak ada data barang</td>
                                 </tr>
                                 <?php else: ?>
                                 <?php 
@@ -190,15 +181,20 @@ require __DIR__ . '/../layouts/header.php';
                                 $no = ($pageNum - 1) * $perPageNum + 1;
                                 foreach ($barangs as $barang): 
                                 ?>
-                                <tr>
-                                    <td align="center"><?= $no++ ?></td>
-                                    <td class="sticky-col"><?= htmlspecialchars($barang['namabarang'] ?? '-') ?></td>
-                                    <td><?= htmlspecialchars($barang['satuan'] ?? '-') ?></td>
-                                    <td><?= htmlspecialchars($barang['pabrik'] ?? '-') ?></td>
-                                    <td><?= htmlspecialchars($barang['kondisi'] ?? '-') ?></td>
-                                    <td><?= htmlspecialchars($barang['ed'] ?? '-') ?></td>
+                                <tr role="button" data-bs-toggle="modal" data-bs-target="#detailModal"
+                                    data-namabarang="<?= htmlspecialchars($barang['namabarang'] ?? '-') ?>"
+                                    data-stok="<?= number_format((float)($barang['stok'] ?? 0), 0, ',', '.') ?>"
+                                    data-hargajual="<?= number_format((float)($barang['hargajual'] ?? 0), 0, ',', '.') ?>"
+                                    data-satuan="<?= htmlspecialchars($barang['satuan'] ?? '-') ?>"
+                                    data-pabrik="<?= htmlspecialchars($barang['pabrik'] ?? '-') ?>"
+                                    data-kondisi="<?= htmlspecialchars($barang['kondisi'] ?? '-') ?>"
+                                    data-ed="<?= htmlspecialchars($barang['ed'] ?? '-') ?>"
+                                    data-discount="<?= number_format((float)($barang['discountjual'] ?? 0), 2, ',', '.') ?>">
+                                    <td class="text-center"><?= $no++ ?></td>
+                                    <td><?= htmlspecialchars($barang['namabarang'] ?? '-') ?></td>
+                                    <td class="text-end"><?= number_format((float)($barang['stok'] ?? 0), 0, ',', '.') ?></td>
                                     <td class="text-end"><?= number_format((float)($barang['hargajual'] ?? 0), 0, ',', '.') ?></td>
-                                    <td class="text-end"><?= number_format((float)($barang['discountjual'] ?? 0), 2, ',', '.') ?></td>
+                                    <td class="text-center"><?= htmlspecialchars($barang['satuan'] ?? '-') ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                                 <?php endif; ?>
@@ -281,7 +277,82 @@ require __DIR__ . '/../layouts/header.php';
     </div>
 </div>
 
+<!-- Modal Detail -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">Detail Barang</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="small text-muted d-block">Nama Barang</label>
+                    <div class="fw-bold" id="modalNamaBarang"></div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label class="small text-muted d-block">Stok</label>
+                        <div class="fw-bold" id="modalStok"></div>
+                    </div>
+                    <div class="col-6">
+                        <label class="small text-muted d-block">Satuan</label>
+                        <div class="fw-bold" id="modalSatuan"></div>
+                    </div>
+                    <div class="col-6">
+                        <label class="small text-muted d-block">Harga Jual</label>
+                        <div class="fw-bold" id="modalHarga"></div>
+                    </div>
+                    <div class="col-6">
+                        <label class="small text-muted d-block">Pabrik</label>
+                        <div class="fw-bold" id="modalPabrik"></div>
+                    </div>
+                    <div class="col-6">
+                        <label class="small text-muted d-block">Kondisi</label>
+                        <div class="fw-bold" id="modalKondisi"></div>
+                    </div>
+                    <div class="col-6">
+                        <label class="small text-muted d-block">ED</label>
+                        <div class="fw-bold" id="modalEd"></div>
+                    </div>
+                    <div class="col-6">
+                        <label class="small text-muted d-block">Discount</label>
+                        <div class="fw-bold" id="modalDiscount"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var detailModal = document.getElementById('detailModal');
+        detailModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            
+            var namabarang = button.getAttribute('data-namabarang');
+            var stok = button.getAttribute('data-stok');
+            var hargajual = button.getAttribute('data-hargajual');
+            var satuan = button.getAttribute('data-satuan');
+            var pabrik = button.getAttribute('data-pabrik');
+            var kondisi = button.getAttribute('data-kondisi');
+            var ed = button.getAttribute('data-ed');
+            var discount = button.getAttribute('data-discount');
+            
+            detailModal.querySelector('#modalNamaBarang').textContent = namabarang;
+            detailModal.querySelector('#modalStok').textContent = stok;
+            detailModal.querySelector('#modalSatuan').textContent = satuan;
+            detailModal.querySelector('#modalHarga').textContent = hargajual;
+            detailModal.querySelector('#modalPabrik').textContent = pabrik;
+            detailModal.querySelector('#modalKondisi').textContent = kondisi;
+            detailModal.querySelector('#modalEd').textContent = ed;
+            detailModal.querySelector('#modalDiscount').textContent = discount + '%';
+        });
+    });
+</script>
 
 <?php require __DIR__ . '/../layouts/footer.php'; ?>
-
-

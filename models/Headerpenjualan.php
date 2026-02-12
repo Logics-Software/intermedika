@@ -125,6 +125,40 @@ class Headerpenjualan {
 		return (int)($result['total'] ?? 0);
 	}
 
+	public function countDistinctCustomers($options = []) {
+		$search = trim($options['search'] ?? '');
+		$kodesales = $options['kodesales'] ?? null;
+		$periode = $options['periode'] ?? 'today';
+		$startDate = $options['start_date'] ?? null;
+		$endDate = $options['end_date'] ?? null;
+		$statuspkp = $options['statuspkp'] ?? null;
+
+		[$filterStart, $filterEnd] = $this->resolveDateRange($periode, $startDate, $endDate);
+
+		$params = [];
+		$where = ["1=1"];
+
+		if ($filterStart && $filterEnd) {
+			$where[] = "hp.tanggalpenjualan BETWEEN ? AND ?";
+			$params[] = $filterStart;
+			$params[] = $filterEnd;
+		}
+
+		if (!empty($kodesales)) {
+			$where[] = "hp.kodesales = ?";
+			$params[] = $kodesales;
+		}
+
+		$whereClause = implode(' AND ', $where);
+
+		$sql = "SELECT COUNT(DISTINCT hp.kodecustomer) AS total
+				FROM headerpenjualan hp
+				WHERE {$whereClause}";
+
+		$result = $this->db->fetchOne($sql, $params);
+		return (int)($result['total'] ?? 0);
+	}
+
 	public function findByNopenjualan($nopenjualan) {
 		$sql = "SELECT hp.*, mc.namacustomer, mc.alamatcustomer, mc.kotacustomer, u.namasales
 				FROM headerpenjualan hp

@@ -149,20 +149,19 @@ require __DIR__ . '/../layouts/header.php';
                                             Tanggal
                                         </a>
                                     </th>
+                                    <th>Jatuh Tempo</th>
                                     <th class="th-sortable text-center <?= ($sortBy ?? 'tanggalpenjualan') === 'umur' ? (($sortOrder ?? 'DESC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">
                                         <a href="<?= getSortUrlTagihan('umur', $sortBy ?? 'tanggalpenjualan', $sortOrder ?? 'DESC', $search ?? '', $perPage ?? 10, $kodecustomer ?? '', $statusJatuhTempo ?? 'semua') ?>" class="text-decoration-none text-dark">
                                             Umur
                                         </a>
                                     </th>
-                                    <th>Jatuh Tempo</th>
+                                    <th>Nilai Penjualan</th>
+                                    <th>Saldo Tagihan</th>
                                     <th class="th-sortable <?= ($sortBy ?? 'tanggalpenjualan') === 'namacustomer' ? (($sortOrder ?? 'DESC') === 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>" style="min-width: 250px;">
                                         <a href="<?= getSortUrlTagihan('namacustomer', $sortBy ?? 'tanggalpenjualan', $sortOrder ?? 'DESC', $search ?? '', $perPage ?? 10, $kodecustomer ?? '', $statusJatuhTempo ?? 'semua') ?>" class="text-decoration-none text-dark">
                                             Customer
                                         </a>
                                     </th>
-                                    <th class="hide-alamat-mobile">Alamat Customer</th>
-                                    <th>Nilai Penjualan</th>
-                                    <th>Saldo Tagihan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -199,12 +198,11 @@ require __DIR__ . '/../layouts/header.php';
                                     <td class="text-center"><?= $no++ ?></td>
                                     <td class="fw-semibold sticky-col"><?= htmlspecialchars($tagihan['nopenjualan'] ?? '-') ?></td>
                                     <td align="center"><?= $tagihan['tanggalpenjualan'] ? date('d/m/Y', strtotime($tagihan['tanggalpenjualan'])) : '-' ?></td>
-                                    <td class="text-center"><?= $umur ?></td>
                                     <td align="center"><?= $tagihan['tanggaljatuhtempo'] ? date('d/m/Y', strtotime($tagihan['tanggaljatuhtempo'])) : '-' ?></td>
-                                    <td><?= htmlspecialchars($customerDisplay ?: '-') ?></td>
-                                    <td class="hide-alamat-mobile"><?= htmlspecialchars($tagihan['alamatcustomer'] ?? '-') ?></td>
+                                    <td class="text-center"><?= $umur ?></td>
                                     <td class="text-end"><?= number_format((float)($tagihan['nilaipenjualan'] ?? 0), 0, ',', '.') ?></td>
                                     <td class="text-end"><?= number_format((float)($tagihan['saldopenjualan'] ?? 0), 0, ',', '.') ?></td>
+                                    <td><?= htmlspecialchars($customerDisplay ?: '-') ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                                 <?php if (!empty($tagihans)): ?>
@@ -214,10 +212,9 @@ require __DIR__ . '/../layouts/header.php';
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td></td>
-                                    <td class="hide-alamat-mobile"></td>
                                     <td class="text-end"><?= number_format($totals['nilaipenjualan'] ?? 0, 0, ',', '.') ?></td>
                                     <td class="text-end"><?= number_format($totals['saldopenjualan'] ?? 0, 0, ',', '.') ?></td>
+                                    <td></td>
                                 </tr>
                                 <?php endif; ?>
                                 <?php endif; ?>

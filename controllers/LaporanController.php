@@ -434,6 +434,8 @@ class LaporanController extends Controller {
                     mb.hargajual,
                     mb.discountjual,
                     mb.kondisi,
+                    mb.ed,
+                    tp.namapabrik AS pabrik,
                     mb.stokakhir AS stok
                 FROM masterbarang mb
                 LEFT JOIN tabelpabrik tp ON mb.kodepabrik = tp.kodepabrik
@@ -499,6 +501,8 @@ class LaporanController extends Controller {
                     mb.hargajual,
                     mb.discountjual,
                     mb.kondisi,
+                    mb.ed,
+                    tp.namapabrik AS pabrik,
                     mb.stokakhir AS stok
                 FROM masterbarang mb
                 LEFT JOIN tabelpabrik tp ON mb.kodepabrik = tp.kodepabrik
@@ -1024,6 +1028,7 @@ class LaporanController extends Controller {
                     tp.namapabrik AS pabrik,
                     mb.kondisi,
                     mb.ed,
+                    mb.stokakhir AS stok,
                     mb.hargajual,
                     mb.discountjual
                 FROM masterbarang mb
@@ -1089,6 +1094,7 @@ class LaporanController extends Controller {
                     tp.namapabrik AS pabrik,
                     mb.kondisi,
                     mb.ed,
+                    mb.stokakhir AS stok,
                     mb.hargajual,
                     mb.discountjual
                 FROM masterbarang mb
@@ -1150,18 +1156,17 @@ class LaporanController extends Controller {
         $output = fopen('php://output', 'w');
 
         // Header
-        fputcsv($output, ['Nama Barang', 'Satuan', 'Pabrik', 'Kondisi', 'ED', 'Harga Jual', 'Discount Jual'], ';');
+        fputcsv($output, ['No', 'Nama Barang', 'Stok', 'Harga Jual', 'Satuan'], ';');
 
         // Data
+        $no = 1;
         foreach ($barangs as $barang) {
             fputcsv($output, [
+                $no++,
                 $barang['namabarang'] ?? '',
-                $barang['satuan'] ?? '',
-                $barang['pabrik'] ?? '',
-                $barang['kondisi'] ?? '',
-                $barang['ed'] ?? '',
+                $barang['stok'] ?? '0',
                 $barang['hargajual'] ?? '0',
-                number_format((float)($barang['discountjual'] ?? 0), 2, ',', '.')
+                $barang['satuan'] ?? ''
             ], ';');
         }
 
@@ -1182,8 +1187,8 @@ class LaporanController extends Controller {
         $pdf->AliasNbPages();
         $pdf->AddPage();
 
-        $header = ['No', 'Nama Barang', 'Satuan', 'Pabrik', 'Kondisi', 'ED', 'Harga Jual', 'Disc'];
-        $widths = [10, 50, 15, 25, 20, 20, 25, 15];
+        $header = ['No', 'Nama Barang', 'Stok', 'Harga', 'Satuan'];
+        $widths = [10, 95, 20, 30, 20];
 
         $pdf->TableHeader($header, $widths);
 
@@ -1192,13 +1197,10 @@ class LaporanController extends Controller {
 
         foreach ($data as $d) {
             $pdf->Cell($widths[0], 6, $no++, 1, 0, 'C');
-            $pdf->Cell($widths[1], 6, substr($d['namabarang'] ?? '-', 0, 35), 1, 0, 'L');
-            $pdf->Cell($widths[2], 6, $d['satuan'] ?? '-', 1, 0, 'C');
-            $pdf->Cell($widths[3], 6, substr($d['pabrik'] ?? '-', 0, 15), 1, 0, 'L');
-            $pdf->Cell($widths[4], 6, substr($d['kondisi'] ?? '-', 0, 12), 1, 0, 'L');
-            $pdf->Cell($widths[5], 6, $d['ed'] ?? '-', 1, 0, 'C');
-            $pdf->Cell($widths[6], 6, number_format((float)($d['hargajual'] ?? 0), 0, ',', '.'), 1, 0, 'R');
-            $pdf->Cell($widths[7], 6, number_format((float)($d['discountjual'] ?? 0), 2, ',', '.') . '%', 1, 0, 'R');
+            $pdf->Cell($widths[1], 6, substr($d['namabarang'] ?? '-', 0, 55), 1, 0, 'L');
+            $pdf->Cell($widths[2], 6, number_format((float)($d['stok'] ?? 0), 0, ',', '.'), 1, 0, 'R');
+            $pdf->Cell($widths[3], 6, number_format((float)($d['hargajual'] ?? 0), 0, ',', '.'), 1, 0, 'R');
+            $pdf->Cell($widths[4], 6, $d['satuan'] ?? '-', 1, 0, 'C');
             $pdf->Ln();
         }
 

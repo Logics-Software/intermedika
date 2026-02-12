@@ -122,7 +122,7 @@ class OmsetHarianController extends Controller {
         // Headers matching web view
         fputcsv($output, [
             'No', 'Nama Sales', 
-            'Faktur', 'Penjualan', 'Retur', 'Netto', 'Target', '%', // Penjualan Group
+            'Outlet', 'Penjualan', 'Retur', 'Netto', 'Target', '%', // Penjualan Group
             'Tunai', 'CN', 'Giro', 'Bersih', 'Target', '%' // Penerimaan Group
         ], ';');
 
@@ -289,7 +289,7 @@ class OmsetHarianController extends Controller {
                 <th colspan="6">Penerimaan</th>
             </tr>
             <tr>
-                <th>Faktur</th>
+                <th>Outlet</th>
                 <th>Penjualan</th>
                 <th>Retur</th>
                 <th>Netto</th>

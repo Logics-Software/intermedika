@@ -149,41 +149,61 @@ class OmsetHarian {
     public function getSummaryBySales($startDate = null, $endDate = null, $kodesales = null) {
         $where = [];
         $params = [];
+        
+        // Params for the subquery in JOIN
+        $hpParams = [];
+        $hpWhere = "1=1";
 
         if ($startDate !== null && $startDate !== '' && $endDate !== null && $endDate !== '') {
-            $where[] = 'tanggal BETWEEN ? AND ?';
+            $where[] = 'oh.tanggal BETWEEN ? AND ?';
             $params[] = $startDate;
             $params[] = $endDate;
+
+            $hpWhere = 'tanggalpenjualan BETWEEN ? AND ?';
+            $hpParams[] = $startDate;
+            $hpParams[] = $endDate;
         } elseif ($startDate !== null && $startDate !== '') {
-            $where[] = 'tanggal = ?';
+            $where[] = 'oh.tanggal = ?';
             $params[] = $startDate;
+
+            $hpWhere = 'tanggalpenjualan = ?';
+            $hpParams[] = $startDate;
         }
 
         if ($kodesales !== null && $kodesales !== '') {
-            $where[] = 'kodesales = ?';
+            $where[] = 'oh.kodesales = ?';
             $params[] = $kodesales;
         }
 
         $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
-        $sql = "SELECT 
-                    kodesales, 
-                    namasales,
-                    SUM(jumlahfaktur) as total_jumlahfaktur,
-                    SUM(penjualan) as total_penjualan,
-                    SUM(returpenjualan) as total_returpenjualan,
-                    SUM(penjualanbersih) as total_penjualanbersih,
-                    SUM(targetpenjualan) as total_targetpenjualan,
-                    SUM(penerimaantunai) as total_penerimaantunai,
-                    SUM(cnpenjualan) as total_cnpenjualan,
-                    SUM(pencairangiro) as total_pencairangiro,
-                    SUM(penerimaanbersih) as total_penerimaanbersih,
-                    SUM(targetpenerimaan) as total_targetpenerimaan
-                FROM omset_harian 
-                {$whereClause} 
-                GROUP BY kodesales, namasales 
-                ORDER BY namasales ASC";
+        // Merge params: hpParams first (for subquery), then existing params (for WHERE clause)
+        $finalParams = array_merge($hpParams, $params);
 
-        return $this->db->fetchAll($sql, $params);
+        $sql = "SELECT 
+                    oh.kodesales, 
+                    oh.namasales,
+                    COALESCE(sales_counts.unique_customers, 0) as total_jumlahfaktur,
+                    SUM(oh.penjualan) as total_penjualan,
+                    SUM(oh.returpenjualan) as total_returpenjualan,
+                    SUM(oh.penjualanbersih) as total_penjualanbersih,
+                    SUM(oh.targetpenjualan) as total_targetpenjualan,
+                    SUM(oh.penerimaantunai) as total_penerimaantunai,
+                    SUM(oh.cnpenjualan) as total_cnpenjualan,
+                    SUM(oh.pencairangiro) as total_pencairangiro,
+                    SUM(oh.penerimaanbersih) as total_penerimaanbersih,
+                    SUM(oh.targetpenerimaan) as total_targetpenerimaan
+                FROM omset_harian oh
+                LEFT JOIN (
+                    SELECT kodesales, COUNT(DISTINCT kodecustomer) as unique_customers
+                    FROM headerpenjualan
+                    WHERE {$hpWhere}
+                    GROUP BY kodesales
+                ) sales_counts ON oh.kodesales = sales_counts.kodesales
+                {$whereClause} 
+                GROUP BY oh.kodesales, oh.namasales, sales_counts.unique_customers 
+                ORDER BY oh.namasales ASC";
+
+        return $this->db->fetchAll($sql, $finalParams);
     }
 }

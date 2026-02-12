@@ -130,7 +130,7 @@ $bulanNama = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                                     <div class="card-body">
                                         <div class="row g-3">
                                             <div class="col-6 col-md-3">
-                                                <div class="small text-muted">Jumlah Faktur</div>
+                                                <div class="small text-muted">Jumlah Outlet</div>
                                                 <div class="fw-bold"><?= number_format((float)($omsetData['jumlahfaktur'] ?? 0), 0, ',', '.') ?></div>
                                             </div>
                                             <div class="col-6 col-md-3">
@@ -163,7 +163,7 @@ $bulanNama = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-header bg-white">
-                                        <h5 class="mb-0">Penerimaan</h5>
+                                        <h5 class="mb-0">Inkaso</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row g-3">

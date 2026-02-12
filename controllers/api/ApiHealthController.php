@@ -7,10 +7,11 @@ class ApiHealthController extends Controller {
     public function index() {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         
-        if ($method !== 'GET') {
-            $this->json(['success' => false, 'message' => 'Method not allowed'], 405);
-            return;
-        }
+        // Allow other methods for testing purposes or strict GET
+        // if ($method !== 'GET') {
+        //     $this->json(['success' => false, 'message' => 'Method not allowed'], 405);
+        //     return;
+        // }
         
         try {
             // Test database connection
@@ -22,6 +23,24 @@ class ApiHealthController extends Controller {
             $dbStatus = 'disconnected';
             $dbError = $e->getMessage();
         }
+
+        // Get headers (polyfill for getallheaders)
+        $headers = [];
+        if (function_exists('getallheaders')) {
+            $headers = getallheaders();
+        } else {
+            foreach ($_SERVER as $name => $value) {
+                if (substr($name, 0, 5) == 'HTTP_') {
+                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                }
+            }
+        }
+        
+        // Build URL
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http");
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+        $url = $protocol . '://' . $host . $requestUri;
         
         $response = [
             'success' => true,
@@ -36,7 +55,11 @@ class ApiHealthController extends Controller {
             'database' => [
                 'status' => $dbStatus,
                 'error' => $dbError
-            ]
+            ],
+            // Debugging/Testing fields
+            'args' => $_GET,
+            'headers' => $headers,
+            'url' => $url
         ];
         
         // If database is disconnected, return 503 Service Unavailable
