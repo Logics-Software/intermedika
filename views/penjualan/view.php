@@ -108,30 +108,30 @@ require __DIR__ . '/../layouts/header.php';
                         <table class="table table-striped table-sm align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th>No</th>
-                                    <th>Kode Barang</th>
+                                    <th class="d-none d-md-table-cell">No</th>
+                                    <th class="d-none d-md-table-cell">Kode Barang</th>
                                     <th>Nama Barang</th>
-                                    <th>Satuan</th>
-                                    <th>No.batch</th>
-                                    <th>ED</th>
+                                    <th class="d-none d-md-table-cell">Satuan</th>
+                                    <th class="d-none d-md-table-cell">No.batch</th>
+                                    <th class="d-none d-md-table-cell">ED</th>
                                     <th class="text-end">Jumlah</th>
                                     <th class="text-end">Harga</th>
-                                    <th class="text-end">Diskon</th>
+                                    <th class="text-end d-none d-md-table-cell">Diskon</th>
                                     <th class="text-end">Jumlah Harga</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($details as $index => $detail): ?>
                                 <tr>
-                                    <td><?= $index + 1 ?></td>
-                                    <td class="fw-semibold"><?= htmlspecialchars($detail['kodebarang']) ?></td>
+                                    <td class="d-none d-md-table-cell"><?= $index + 1 ?></td>
+                                    <td class="fw-semibold d-none d-md-table-cell"><?= htmlspecialchars($detail['kodebarang']) ?></td>
                                     <td><?= htmlspecialchars($detail['namabarang'] ?? '-') ?></td>
-                                    <td><?= htmlspecialchars($detail['satuan'] ?? '-') ?></td>
-                                    <td><?= htmlspecialchars($detail['nomorbatch'] ?? '-') ?></td>
-                                    <td><?= $detail['expireddate'] ? date('d/m/Y', strtotime($detail['expireddate'])) : '-' ?></td>
+                                    <td class="d-none d-md-table-cell"><?= htmlspecialchars($detail['satuan'] ?? '-') ?></td>
+                                    <td class="d-none d-md-table-cell"><?= htmlspecialchars($detail['nomorbatch'] ?? '-') ?></td>
+                                    <td class="d-none d-md-table-cell"><?= $detail['expireddate'] ? date('d/m/Y', strtotime($detail['expireddate'])) : '-' ?></td>
                                     <td class="text-end"><?= number_format((float)$detail['jumlah'], 0, ',', '.') ?></td>
                                     <td class="text-end"><?= number_format((float)$detail['hargasatuan'], 0, ',', '.') ?></td>
-                                    <td class="text-end"><?= number_format((float)$detail['discount'], 2, ',', '.') ?></td>
+                                    <td class="text-end d-none d-md-table-cell"><?= number_format((float)$detail['discount'], 2, ',', '.') ?></td>
                                     <td class="text-end"><?= number_format((float)$detail['jumlahharga'], 0, ',', '.') ?></td>
                                 </tr>
                                 <?php endforeach; ?>
