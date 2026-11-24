@@ -179,13 +179,14 @@ require __DIR__ . '/../layouts/header.php';
                                     <th>Pabrik</th>
                                     <th class="text-end">Jumlah</th>
                                     <th class="text-end">Harga Rata-rata</th>
+                                    <th class="text-end">Harga Terakhir</th>
                                     <th class="text-end">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($reportData)): ?>
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">Tidak ada data penjualan</td>
+                                    <td colspan="7" class="text-center text-muted py-4">Tidak ada data penjualan</td>
                                 </tr>
                                 <?php else: ?>
                                 <?php 
@@ -203,19 +204,19 @@ require __DIR__ . '/../layouts/header.php';
                                     
                                     // Print customer total if customer is changing
                                     if ($isCustomerChanging && $currentCustomer !== null) {
-                                        echo '<tr class="table-light"><td colspan="5" class="text-end fw-bold py-2 pe-3">Total Penjualan:</td><td class="text-end fw-bold py-2">' . number_format($customerTotal, 0, ',', '.') . '</td></tr>';
+                                        echo '<tr class="table-light"><td colspan="6" class="text-end fw-bold py-2 pe-3">Total Penjualan:</td><td class="text-end fw-bold py-2">' . number_format($customerTotal, 0, ',', '.') . '</td></tr>';
                                         $customerTotal = 0;
                                     }
                                     
                                     // Print sales total if sales is changing
                                     if ($isSalesChanging && $currentSales !== null) {
-                                        echo '<tr class="table-warning"><td colspan="5" class="text-end fw-bold py-2 pe-3">TOTAL SALES:</td><td class="text-end fw-bold py-2">' . number_format($salesTotal, 0, ',', '.') . '</td></tr>';
+                                        echo '<tr class="table-warning"><td colspan="6" class="text-end fw-bold py-2 pe-3">TOTAL SALES:</td><td class="text-end fw-bold py-2">' . number_format($salesTotal, 0, ',', '.') . '</td></tr>';
                                         $salesTotal = 0;
                                     }
                                     
                                     // Group Header 1: Sales
                                     if ($row['kodesales'] !== $currentSales) {
-                                        echo '<tr class="table-secondary"><td colspan="6" class="fw-bold py-2"><i class="fas fa-user-tie me-2"></i> SALES: ' . htmlspecialchars($row['namasales']) . '</td></tr>';
+                                        echo '<tr class="table-secondary"><td colspan="7" class="fw-bold py-2"><i class="fas fa-user-tie me-2"></i> SALES: ' . htmlspecialchars($row['namasales']) . '</td></tr>';
                                         $currentSales = $row['kodesales'];
                                         $currentCustomer = null;
                                         $customerTotal = 0;
@@ -230,7 +231,7 @@ require __DIR__ . '/../layouts/header.php';
                                         if (!empty($row['alamatcustomer'])) {
                                             $customerDisplay .= ' - ' . htmlspecialchars($row['alamatcustomer']);
                                         }
-                                        echo '<tr class="table-info bg-opacity-10"><td colspan="6" class="fw-bold py-2 ps-4"><i class="fas fa-building me-2"></i> ' . $customerDisplay . '</td></tr>';
+                                        echo '<tr class="table-info bg-opacity-10"><td colspan="7" class="fw-bold py-2 ps-4"><i class="fas fa-building me-2"></i> ' . $customerDisplay . '</td></tr>';
                                         $currentCustomer = $row['kodecustomer'];
                                     }
                                     
@@ -245,15 +246,16 @@ require __DIR__ . '/../layouts/header.php';
                                     <td><?= htmlspecialchars($row['namapabrik'] ?? '-') ?></td>
                                     <td class="text-end"><?= number_format((float)($row['total_jumlah'] ?? 0), 0, ',', '.') ?></td>
                                     <td class="text-end"><?= number_format((float)($row['harga_rata_rata'] ?? 0), 0, ',', '.') ?></td>
+                                    <td class="text-end"><?= number_format((float)($row['harga_terakhir'] ?? 0), 0, ',', '.') ?></td>
                                     <td class="text-end fw-bold"><?= number_format((float)($row['total_nilai'] ?? 0), 0, ',', '.') ?></td>
                                 </tr>
                                 <?php 
                                     // Print totals for last item
                                     if ($isLastItem && $currentCustomer !== null) {
                                         // Customer total
-                                        echo '<tr class="table-light"><td colspan="5" class="text-end fw-bold py-2 pe-3">Total Penjualan:</td><td class="text-end fw-bold py-2">' . number_format($customerTotal, 0, ',', '.') . '</td></tr>';
+                                        echo '<tr class="table-light"><td colspan="6" class="text-end fw-bold py-2 pe-3">Total Penjualan:</td><td class="text-end fw-bold py-2">' . number_format($customerTotal, 0, ',', '.') . '</td></tr>';
                                         // Sales total
-                                        echo '<tr class="table-warning"><td colspan="5" class="text-end fw-bold py-2 pe-3">TOTAL SALES:</td><td class="text-end fw-bold py-2">' . number_format($salesTotal, 0, ',', '.') . '</td></tr>';
+                                        echo '<tr class="table-warning"><td colspan="6" class="text-end fw-bold py-2 pe-3">TOTAL SALES:</td><td class="text-end fw-bold py-2">' . number_format($salesTotal, 0, ',', '.') . '</td></tr>';
                                     }
                                 endforeach; ?>
                                 <?php endif; ?>

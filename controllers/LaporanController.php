@@ -1793,7 +1793,13 @@ class LaporanController extends Controller {
                     tp.namapabrik,
                     SUM(dp.jumlah) as total_jumlah,
                     SUM(dp.jumlahharga) as total_nilai,
-                    (SUM(dp.jumlahharga) / NULLIF(SUM(dp.jumlah), 0)) as harga_rata_rata
+                    (SUM(dp.jumlahharga) / NULLIF(SUM(dp.jumlah), 0)) as harga_rata_rata,
+                    (SELECT dp2.hargasatuan
+                        FROM detailpenjualan dp2
+                        JOIN headerpenjualan hp2 ON dp2.nopenjualan = hp2.nopenjualan
+                        WHERE hp2.kodecustomer = hp.kodecustomer AND dp2.kodebarang = dp.kodebarang
+                        ORDER BY hp2.tanggalpenjualan DESC, hp2.nopenjualan DESC, dp2.nourut DESC
+                        LIMIT 1) as harga_terakhir
                 FROM detailpenjualan dp
                 JOIN headerpenjualan hp ON dp.nopenjualan = hp.nopenjualan
                 JOIN masterbarang mb ON dp.kodebarang = mb.kodebarang
@@ -2126,7 +2132,7 @@ class LaporanController extends Controller {
         $output = fopen('php://output', 'w');
 
         // Header
-        fputcsv($output, ['No', 'Sales', 'Customer', 'Barang', 'Satuan', 'Pabrik', 'Qty', 'Total Nilai', 'Rata-rata'], ';');
+        fputcsv($output, ['No', 'Sales', 'Customer', 'Barang', 'Satuan', 'Pabrik', 'Qty', 'Total Nilai', 'Rata-rata', 'Harga Terakhir'], ';');
 
         // Data
         $no = 1;
@@ -2140,7 +2146,8 @@ class LaporanController extends Controller {
                 $row['namapabrik'] ?? '-',
                 number_format((float)($row['total_jumlah'] ?? 0), 0, ',', '.'),
                 number_format((float)($row['total_nilai'] ?? 0), 0, ',', '.'),
-                number_format((float)($row['harga_rata_rata'] ?? 0), 0, ',', '.')
+                number_format((float)($row['harga_rata_rata'] ?? 0), 0, ',', '.'),
+                number_format((float)($row['harga_terakhir'] ?? 0), 0, ',', '.')
             ], ';');
         }
 
@@ -2175,8 +2182,8 @@ class LaporanController extends Controller {
         $pdf->AddPage();
 
         // 10 + 35 + 50 + 60 + 20 + 20 + 35 + 30 = 260 (A4 Landscape usable ~270-280)
-        $header = ['No', 'Sales', 'Customer', 'Barang', 'Satuan', 'Qty', 'Total', 'Avg'];
-        $widths = [10, 35, 50, 60, 20, 20, 35, 30];
+        $header = ['No', 'Sales', 'Customer', 'Barang', 'Satuan', 'Qty', 'Total', 'Avg', 'Hrg Akhir'];
+        $widths = [10, 30, 45, 55, 18, 18, 33, 30, 30];
 
         $pdf->TableHeader($header, $widths);
 
@@ -2192,6 +2199,7 @@ class LaporanController extends Controller {
             $pdf->Cell($widths[5], 6, number_format((float)($d['total_jumlah'] ?? 0), 0, ',', '.'), 1, 0, 'R');
             $pdf->Cell($widths[6], 6, number_format((float)($d['total_nilai'] ?? 0), 0, ',', '.'), 1, 0, 'R');
             $pdf->Cell($widths[7], 6, number_format((float)($d['harga_rata_rata'] ?? 0), 0, ',', '.'), 1, 0, 'R');
+            $pdf->Cell($widths[8], 6, number_format((float)($d['harga_terakhir'] ?? 0), 0, ',', '.'), 1, 0, 'R');
             $pdf->Ln();
         }
 
